@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Section;
 use App\Models\Addition;
+use App\Events\RegisterOrderPricing;
 use Illuminate\Http\Request;
 use App\Events\InvoiceProcessed;
 use Illuminate\Support\Facades\DB;
@@ -138,6 +139,7 @@ class InvoiceController extends Controller
 
             foreach($invoice->orders as $order)
             {
+                event(new RegisterOrderPricing($order->id , $order->price - $order->payment));
                 $order->update(['payment'=> $order->price]);
                 $order->save();
             }
@@ -179,7 +181,8 @@ class InvoiceController extends Controller
                     if($request->status == 'inactive'){
                         Product::whereId($products['product_id'])->decrement('quantity');
                     }
-                    Order::create($products);
+                    $order =  Order::create($products);
+                    event(new RegisterOrderPricing($order->id , $order->payment));
                 }
             }
             if(is_array($request->get('list-product-1')) && count($request->get('list-product-1')) > 0){
@@ -188,11 +191,12 @@ class InvoiceController extends Controller
                     unset($additions['title'] ,$additions['data']);
                     $additions['invoice_id'] = $invoice->id;
                     $additions['addition_id'] = $addition->id;
-                    Order::create($additions);
+                    $order = Order::create($additions);
+                    event(new RegisterOrderPricing($order->id , $order->payment));
                 }
             }
-            DB::commit();
             event(new InvoiceProcessed($invoice));
+            DB::commit();
             return to_route('invoice.print' , $invoice->id)->with("success" ,'تم اضافة فاتورة بنجاح' );
         }catch (\Exception $e) {
             DB::rollBack();
@@ -391,20 +395,33 @@ class InvoiceController extends Controller
     // {
     //     return view('invoices.createOrder');
     // }
-    
+
     public function updateOrder(Request $request)
     {
-        $request->validate([
-            'order_id' => ['required', 'integer'],
-            'invoice_id' => ['required', 'integer'],
-            'price' => ['required', 'integer' , 'min:1' , 'max:1000000'],
-            'payment' => ['required', 'integer' , 'min:1' , 'max:1000000','lte:price'],
-        ]);
-        Order::where('id' , $request->order_id)->update(['payment' => $request->payment , 'price' => $request->price]);
+        DB::beginTransaction();
+        try{
+            $order = Order::where('id' , $request->order_id)->first();
+            $request->validate([
+                'order_id' => ['required', 'integer'],
+                'invoice_id' => ['required', 'integer'],
+                'price' => ['required', 'integer' , 'min:1' , 'max:1000000'],
+                'payment' => ['required', 'integer' , 'min:1' , 'max:1000000','lte:price', 'gt:' . $order->payment],
+            ]);
 
-        $invoice = Invoice::where('id', $request->invoice_id)->withTrashed()->first();
-        event(new InvoiceProcessed($invoice));
-        return back()->with('success' , 'Order updated successfully');
+
+            $price = $request->payment -$order->payment;
+
+            event(new RegisterOrderPricing($request->order_id , $price));
+            $order->update(['payment' => $request->payment]);
+
+            $invoice = Invoice::where('id', $request->invoice_id)->withTrashed()->first();
+            event(new InvoiceProcessed($invoice));
+            DB::commit();
+            return back()->with('success' , 'Order updated successfully');
+        }catch(\Exception){
+            DB::rollback();
+            return back();
+        }
     }
 
     // public function destroyOrder(Request $request)

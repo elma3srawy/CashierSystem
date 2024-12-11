@@ -35,12 +35,9 @@
                             <th>#</th>
                             <th>عرض البيانات</th>
                             <th>الحالة</th>
-                            <th>الاسبوع</th>
-                            <th>الشهر</th>
-                            <th>السنة</th>
+                            <th>تاريخ بدايه الاسبوع</th>
+                            <th>تاريخ نهايه الاسبوع</th>
                             <th>الحساب الكلي</th>
-                            <th>المدفوع</th>
-                            <th>الباقي</th>
                             <th>العمليه</th>
                           </tr>
                         </thead>
@@ -49,8 +46,10 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                <form method="GET" action="{{ route('sales.orders') }}" style="display: inline;">
-                                    <input type="hidden" name="order_ids" value="{{ $sale->order_ids }}">
+                                <form method="GET"  action="{{ route('sales.orders', ['start_week' => $sale->week_start_date, 'end_week' => $sale->week_end_date, 'status' => $sale->status]) }}" style="display: inline;">
+                                    @isset ($sale->deleted_at)
+                                    <input type="hidden" name="archive" value="true">
+                                    @endisset
                                     <button type="submit" style="border: none; background: none; color: red; cursor: pointer; text-decoration: none; padding: 0;">
                                         البيانات
                                     </button>
@@ -62,33 +61,12 @@
                             @else
                                 <td><span class="badge badge-danger">بيع</span></td>
                             @endif
-
-                            <td>@switch($sale->number_of_week)
-                                @case(1)
-                                        الاسبوع الاول
-                                    @break
-                                @case(2)
-                                        الاسبوع الثاني
-                                    @break
-                                @case(3)
-                                        الاسبوع الثالث
-                                    @break
-                                @case(4)
-                                        الاسبوع الرابع
-                                    @break
-                                @case(5)
-                                        الاسبوع الخامس
-                                    @break
-                            @endswitch
-                            </td>
-                            <td>{{ $sale->month_name }}</td>
-                            <td>{{ $sale->number_of_year }}</td>
-                            <td>{{ $sale->total_price ?? 0  }}</td>
-                            <td>{{ $sale->payments  ?? 0}}</td>
-                            <td>{{ $sale->total_price  - $sale->payments  }}</td>
+                            <td>{{ $sale->week_start_date }}</td>
+                            <td>{{ $sale->week_end_date }}</td>
+                            <td>{{ $sale->total_price}}</td>
                             <td>
                                 @if (is_null($sale->deleted_at))
-                                <button disabled type="button" class="btn btn-warning archive-btn" data-toggle="modal" data-target="#archiveModal" data-archive-id="{{ $sale->id }}">
+                                <button disabled type="button" class="btn btn-warning archive-btn" data-toggle="modal" data-target="#archiveModal" data-archive-id="{{ $sale->ids }}">
                                     أرشفة
                                 </button>
                                 @else

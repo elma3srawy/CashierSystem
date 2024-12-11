@@ -126,7 +126,7 @@
             <ul class="collapse list-unstyled pl-4 w-100" id="sales">
                 <li class="nav-item">
                 <a class="nav-link pl-3" href="{{ route('sales.index') }}">
-                    <span class="ml-1 item-text">الايجار و البيع</span>
+                    <span class="ml-1 item-text">الكل</span>
                 </a>
                 </li>
                 <li class="nav-item">
@@ -151,7 +151,7 @@
             <ul class="collapse list-unstyled pl-4 w-100" id="archive">
                 <li class="nav-item">
                 <a class="nav-link pl-3" href="{{ route('sales.archive.all') }}">
-                    <span class="ml-1 item-text">الايجار و البيع</span>
+                    <span class="ml-1 item-text">الكل</span>
                 </a>
                 </li>
                 <li class="nav-item">
@@ -168,6 +168,59 @@
             </li>
         </ul>
         @endcan
+        <!-- Separate block for sales -->
+        {{-- @can('access-superAdmin')
+        <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item dropdown">
+            <a href="#sales" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-dollar-sign fe-16"></i>
+                <span class="ml-3 item-text">الحسابات</span>
+            </a>
+            <ul class="collapse list-unstyled pl-4 w-100" id="sales">
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.weekly.index') }}">
+                    <span class="ml-1 item-text">الكل</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.weekly.pending') }}">
+                    <span class="ml-1 item-text">الايجار</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.weekly.inactive') }}">
+                    <span class="ml-1 item-text">البيع</span>
+                </a>
+                </li>
+            </ul>
+            </li>
+        </ul>
+        <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item dropdown">
+            <a href="#archive" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-archive fe-16"></i>
+                <span class="ml-3 item-text">الارشيف</span>
+            </a>
+            <ul class="collapse list-unstyled pl-4 w-100" id="archive">
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.weekly.archive.all') }}">
+                    <span class="ml-1 item-text">الكل</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.weekly.archive.pending') }}">
+                    <span class="ml-1 item-text">الايجار</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.weekly.archive.inactive') }}">
+                    <span class="ml-1 item-text">البيع</span>
+                </a>
+                </li>
+            </ul>
+            </li>
+        </ul>
+        @endcan --}}
 
         <p class="text-muted nav-heading mt-4 mb-1">
             <span>العملاء</span>

@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\ChangeRoleController;
 use App\Http\Controllers\Section\SectionsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Notification\NotificationController;
+use App\Http\Controllers\Sales\SalesWeeklyController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -64,18 +66,26 @@ Route::middleware('auth')->group(function(){
         Route::put('/order/update', [InvoiceController::class, 'updateOrder'])->name('order.update');
         Route::delete('/order/delete', [InvoiceController::class, 'destroyOrder'])->name('order.delete');
 
-        Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
-        Route::get('/sales/pending', [SalesController::class, 'pending'])->name('sales.pending');
-        Route::get('/sales/inactive', [SalesController::class, 'inactive'])->name('sales.inactive');
-        
-        Route::get('/sales/archive/all', [SalesController::class, 'archiveAll'])->name('sales.archive.all');
-        Route::get('/sales/archive/pending', [SalesController::class, 'archivePending'])->name('sales.archive.pending');
-        Route::get('/sales/archive/inactive', [SalesController::class, 'archiveInactive'])->name('sales.archive.inactive');
-       
+        // Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+        // Route::get('/sales/pending', [SalesController::class, 'pending'])->name('sales.pending');
+        // Route::get('/sales/inactive', [SalesController::class, 'inactive'])->name('sales.inactive');
+        Route::get('/sales/weekly', [SalesWeeklyController::class, 'index'])->name('sales.index');
+        Route::get('/sales/weekly/pending', [SalesWeeklyController::class, 'pending'])->name('sales.pending');
+        Route::get('/sales/weekly/inactive', [SalesWeeklyController::class, 'inactive'])->name('sales.inactive');
 
-        Route::get('/sales/orders', [SalesController::class, 'showOrders'])->name('sales.orders');
-        Route::patch('/sales/{id}/archive', [SalesController::class, 'archive'])->name('sales.archive');
+        Route::patch('/sales/{id}/archive', [SalesWeeklyController::class, 'archive'])->name('sales.archive');
+        // Route::patch('/sales/{id}/archive', [SalesController::class, 'archive'])->name('sales.archive');
 
+        // Route::get('/sales/archive/all', [SalesController::class, 'archiveAll'])->name('sales.archive.all');
+        // Route::get('/sales/archive/pending', [SalesController::class, 'archivePending'])->name('sales.archive.pending');
+        // Route::get('/sales/archive/inactive', [SalesController::class, 'archiveInactive'])->name('sales.archive.inactive');
+        Route::get('/sales/archive/all', [SalesWeeklyController::class, 'archiveAll'])->name('sales.archive.all');
+        Route::get('/sales/archive/pending', [SalesWeeklyController::class, 'archivePending'])->name('sales.archive.pending');
+        Route::get('/sales/archive/inactive', [SalesWeeklyController::class, 'archiveInactive'])->name('sales.archive.inactive');
+
+
+        // Route::get('/sales/orders', [SalesController::class, 'showOrders'])->name('sales.orders');
+        Route::get('/sales/weekly/orders/{start_week}/{end_week}/{status}', [SalesWeeklyController::class, 'showOrders'])->name('sales.orders');
     });
 
     Route::resource('/clients', ClientController::class);

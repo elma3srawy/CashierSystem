@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Events\InvoiceProcessed;
+use App\Listeners\LogOrderPrice;
+use App\Events\RegisterOrderPricing;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\CalculateWeeklySales;
@@ -20,6 +22,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        RegisterOrderPricing::class => [
+            LogOrderPrice::class,
+        ]
     ];
 
     /**

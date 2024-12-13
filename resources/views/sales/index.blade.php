@@ -41,7 +41,7 @@
                             <th>الحساب الكلي</th>
                             <th>المدفوع</th>
                             <th>الباقي</th>
-                            <th>العمليه</th>
+                            {{-- <th>العمليه</th> --}}
                           </tr>
                         </thead>
                         <tbody>
@@ -49,7 +49,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>
-                                <form method="GET" action="{{ route('sales.orders') }}" style="display: inline;">
+                                <form method="GET" action="{{ route('sales.test.orders') }}" style="display: inline;">
                                     <input type="hidden" name="order_ids" value="{{ $sale->order_ids }}">
                                     <button type="submit" style="border: none; background: none; color: red; cursor: pointer; text-decoration: none; padding: 0;">
                                         البيانات
@@ -86,7 +86,7 @@
                             <td>{{ $sale->total_price ?? 0  }}</td>
                             <td>{{ $sale->payments  ?? 0}}</td>
                             <td>{{ $sale->total_price  - $sale->payments  }}</td>
-                            <td>
+                            {{-- <td>
                                 @if (is_null($sale->deleted_at))
                                 <button disabled type="button" class="btn btn-warning archive-btn" data-toggle="modal" data-target="#archiveModal" data-archive-id="{{ $sale->id }}">
                                     أرشفة
@@ -94,7 +94,7 @@
                                 @else
                                 لا توجد
                                 @endif
-                            </td>
+                            </td> --}}
                         </tr>
                         @endforeach
                         </tbody>

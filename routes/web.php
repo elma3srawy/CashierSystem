@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function(){
         Route::put('/order/update', [InvoiceController::class, 'updateOrder'])->name('order.update');
         Route::delete('/order/delete', [InvoiceController::class, 'destroyOrder'])->name('order.delete');
 
-        // Route::get('/sales', [SalesController::class, 'index'])->name('sales.index');
+        Route::get('/sales', [SalesController::class, 'index'])->name('sales.test.index');
         // Route::get('/sales/pending', [SalesController::class, 'pending'])->name('sales.pending');
         // Route::get('/sales/inactive', [SalesController::class, 'inactive'])->name('sales.inactive');
         Route::get('/sales/weekly', [SalesWeeklyController::class, 'index'])->name('sales.index');
@@ -84,7 +84,7 @@ Route::middleware('auth')->group(function(){
         Route::get('/sales/archive/inactive', [SalesWeeklyController::class, 'archiveInactive'])->name('sales.archive.inactive');
 
 
-        // Route::get('/sales/orders', [SalesController::class, 'showOrders'])->name('sales.orders');
+        Route::get('/sales/orders', [SalesController::class, 'showOrders'])->name('sales.test.orders');
         Route::get('/sales/weekly/orders/{start_week}/{end_week}/{status}', [SalesWeeklyController::class, 'showOrders'])->name('sales.orders');
     });
 

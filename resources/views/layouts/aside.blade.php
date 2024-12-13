@@ -167,6 +167,32 @@
             </ul>
             </li>
         </ul>
+
+        <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item dropdown">
+            <a href="#salestest" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-dollar-sign fe-16"></i>
+                <span class="ml-3 item-text">الحسابات</span>
+            </a>
+            <ul class="collapse list-unstyled pl-4 w-100" id="salestest">
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.test.index') }}">
+                    <span class="ml-1 item-text">الكل</span>
+                </a>
+                {{-- </li>
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.pending') }}">
+                    <span class="ml-1 item-text">الايجار</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link pl-3" href="{{ route('sales.inactive') }}">
+                    <span class="ml-1 item-text">البيع</span>
+                </a>
+                </li> --}}
+            </ul>
+            </li>
+        </ul>
         @endcan
         <!-- Separate block for sales -->
         {{-- @can('access-superAdmin')

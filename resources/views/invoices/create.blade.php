@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
             gregorianDateInput1.value = gregorianDate;
 
             // Set the second date picker to one day after the selected date
-            var nextDay = moment(date).add(1, 'days').toDate();
+            var nextDay = moment(date).add(2, 'days').toDate();
             picker2.setDate(nextDay);
         },
         isRTL: true

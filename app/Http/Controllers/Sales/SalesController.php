@@ -61,11 +61,7 @@ class SalesController extends Controller
         if($status){
             $sales->where('status' , $status);
         }
-        if($archive){
-            $sales->whereNotNull('deleted_at');
-        }else{
-            $sales->whereNull('deleted_at');
-        }
+        
         return $sales->paginate(PAGINATE);
     }
     public function archiveAll()

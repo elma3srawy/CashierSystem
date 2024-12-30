@@ -9,19 +9,24 @@ use App\Http\Controllers\Controller;
 
 class SalesWeeklyController extends Controller
 {
+    public function deposits()
+    {
+        $deposits = OrderPricing::GetWeeklyStats()->where('orders.price' , '<>',DB::Raw('orders.payment'))->paginate(PAGINATE);
+        return view('salesWeekly.deposits' , ['deposits' => $deposits]);
+    }
     public function index()
     {
-        $sales = OrderPricing::GetWeeklyStats()->paginate(PAGINATE);
+        $sales = OrderPricing::GetWeeklyStats()->where('orders.price' , '=',DB::Raw('orders.payment'))->paginate(PAGINATE);
         return view('salesWeekly.index' , ['sales' => $sales]);
     }
     public function pending()
     {
-        $sales = OrderPricing::GetWeeklyStats()->having('invoices.status' , 'pending')->paginate(PAGINATE);
+        $sales = OrderPricing::GetWeeklyStats()->where('orders.price' , '=',DB::Raw('orders.payment'))->having('invoices.status' , 'pending')->paginate(PAGINATE);
         return view('salesWeekly.pending' , ['sales' => $sales]);
     }
     public function inactive()
     {
-        $sales = OrderPricing::GetWeeklyStats()->having('invoices.status' , 'inactive')->paginate(PAGINATE);
+        $sales = OrderPricing::GetWeeklyStats()->where('orders.price' , '=',DB::Raw('orders.payment'))->having('invoices.status' , 'inactive')->paginate(PAGINATE);
         return view('salesWeekly.inactive' , ['sales' => $sales]);
     }
 
@@ -34,17 +39,17 @@ class SalesWeeklyController extends Controller
     }
     public function archiveAll()
     {
-        $sales = OrderPricing::onlyTrashed()->GetWeeklyStats()->paginate(PAGINATE);
+        $sales = OrderPricing::onlyTrashed()->GetWeeklyStats()->where('orders.price' , '=',DB::Raw('orders.payment'))->paginate(PAGINATE);
         return view('salesWeekly.index' , ['sales' => $sales]);
     }
     public function archivePending()
     {
-        $sales = OrderPricing::onlyTrashed()->GetWeeklyStats()->having('invoices.status' , 'pending')->paginate(PAGINATE);
+        $sales = OrderPricing::onlyTrashed()->GetWeeklyStats()->where('orders.price' , '=',DB::Raw('orders.payment'))->having('invoices.status' , 'pending')->paginate(PAGINATE);
         return view('salesWeekly.pending' , ['sales' => $sales]);
     }
     public function archiveInactive()
     {
-        $sales = OrderPricing::onlyTrashed()->GetWeeklyStats()->having('invoices.status' , 'inactive')->paginate(PAGINATE);
+        $sales = OrderPricing::onlyTrashed()->GetWeeklyStats()->where('orders.price' , '=',DB::Raw('orders.payment'))->having('invoices.status' , 'inactive')->paginate(PAGINATE);
         return view('salesWeekly.inactive' , ['sales' => $sales]);
     }
 
@@ -53,6 +58,12 @@ class SalesWeeklyController extends Controller
     {
 
         $orders = OrderPricing::GetWeeklyWhere($start_week , $end_week , $status);
+
+        if(request('deposit')){
+            $orders->where('orders.price' , '<>',DB::Raw('orders.payment'));
+        }else{
+            $orders->where('orders.price' , '=',DB::Raw('orders.payment'));
+        }
 
         if(request('archive') == "true"){
             $orders->onlyTrashed();

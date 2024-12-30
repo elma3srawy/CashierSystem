@@ -1,7 +1,9 @@
 <?php
 
 
+use App\Models\OrderPricing;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cookie;
@@ -13,9 +15,9 @@ use App\Http\Controllers\Invoice\InvoiceController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Admin\ChangeRoleController;
 use App\Http\Controllers\Section\SectionsController;
+use App\Http\Controllers\Sales\SalesWeeklyController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Notification\NotificationController;
-use App\Http\Controllers\Sales\SalesWeeklyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +69,7 @@ Route::middleware('auth')->group(function(){
         Route::delete('/order/delete', [InvoiceController::class, 'destroyOrder'])->name('order.delete');
 
         Route::get('/sales', [SalesController::class, 'index'])->name('sales.test.index');
+        Route::get('/deposits', [SalesWeeklyController::class, 'deposits'])->name('sales.deposit');
         // Route::get('/sales/pending', [SalesController::class, 'pending'])->name('sales.pending');
         // Route::get('/sales/inactive', [SalesController::class, 'inactive'])->name('sales.inactive');
         Route::get('/sales/weekly', [SalesWeeklyController::class, 'index'])->name('sales.index');

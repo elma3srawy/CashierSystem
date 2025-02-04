@@ -40,11 +40,33 @@ class InvoiceController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    // public function create()
+    // {
+    //     // $parent_sections = $this->getSections();
+    //     $parent_sections = Section::whereNull('section_id')->get(['id' , 'name']);
+
+    //     return view('invoices.create' , ['parent_sections' => $parent_sections]);
+    // }
+    public function createPending()
     {
-        $parent_sections = Section::whereNull('section_id')->get(['id' , 'name']);
-        return view('invoices.create' , ['parent_sections' => $parent_sections]);
+        $parent_sections = $this->getSections(1);
+
+        return view('invoices.create-pending' , ['parent_sections' => $parent_sections]);
     }
+    public function createInactive()
+    {
+        $parent_sections = $this->getSections(0);
+
+        return view('invoices.create-inactive' , ['parent_sections' => $parent_sections]);
+    }
+
+    public function getSections($status)
+    {
+        return Section::whereNull('section_id')
+        ->where('status' , $status)
+        ->get(['id' , 'name']);
+    }
+
     public function getSection(Request $request)
     {
         try
@@ -211,6 +233,10 @@ class InvoiceController extends Controller
     public function show(string $id)
     {
         $this->invoice = Invoice::withTrashed()->with(['client','orders.product', 'orders.addition'])->where('id', $id)->first();
+        if(!$this->invoice)
+        {
+            abort(404);
+        }
         $orders = $this->invoice->orders;
         return view('invoices.show' , ['orders' => $orders]);
     }

@@ -28,16 +28,25 @@
                             </div>
                         </div>
                     </div>
-                <div class="form-group mb-3">
+                <div id="status" class="form-group mb-3">
+                    <label for="custom-select-1">اختر القسم الرئيسى :</label>
+                    <select class="custom-select" id="custom-select-1" name="status">
+                      <option selected>-- الحالة --</option>
+                      <option value="1">ايجار</option>
+                      <option value="0">بيع</option>
+                    </select>
+                  </div>
+                <div id='section' class="form-group mb-3">
                     <label for="custom-select">اختر القسم الرئيسى :</label>
                     <select class="custom-select" id="custom-select" name="section_id">
                       <option value="" selected>-- اختر قسم --</option>
-                        @foreach($sections as $section)
+                        @foreach($parent_sections as $section)
                             <option value="{{ $section->id }}">{{ $section->name }}</option>
                         @endforeach
                     </select>
                   </div>
                   <div class="modal-footer">
+                      <button id="restore" type="button" class="btn mb-2 btn-info">رجوع</button>
                     <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">غلق</button>
                     <button type="submit" onclick="this.form.submit(); this.disabled = true;" class="btn mb-2 btn-primary">حفظ</button>
                     </div>
@@ -219,6 +228,59 @@
                 }
             });
         });
+    });
+</script>
+
+<script>
+    const select = document.getElementById('custom-select');
+    const select_1 = document.getElementById('custom-select-1');
+    const div = document.getElementById('status');
+    const section = document.getElementById('section');
+
+
+
+    select.addEventListener('change', function() {
+        if(div){
+            div.innerHTML = '';
+        }
+        // console.log('Selected value:', this.value); // Log the selected value
+        // console.log('Selected text:', this.options[this.selectedIndex].text); // Log the selected text
+    });
+    // select_1.addEventListener('change', function() {
+    //     // console.log(select_1);
+    //     // console.log(section);
+
+    //     if(section){
+    //         section.innerHTML = '';
+    //     }
+    // });
+
+    const restoreBottom = document.getElementById('restore');
+    restoreBottom.addEventListener('click' , function()
+    {
+        div.innerHTML = ` <label for="custom-select-1">اختر القسم الرئيسى :</label>
+                    <select class="custom-select" id="custom-select-1" name="status">
+                      <option selected>-- الحالة --</option>
+                      <option value="1">ايجار</option>
+                      <option value="0">بيع</option>
+                    </select>`;
+        select.selectedIndex = 0;
+
+        // select.innerHTML = '';
+
+            // Add the default option
+            // const defaultOption = document.createElement('option');
+            // defaultOption.value = '';
+            // defaultOption.textContent = '-- اختر قسم --';
+            // defaultOption.selected = true;
+            // select.appendChild(defaultOption);
+
+            // select.forEach(section => {
+            //     const option = document.createElement('option');
+            //     option.value = section.id; // 
+            //     option.textContent = section.name;
+            //     select.appendChild(option);
+            // });
     });
 </script>
 

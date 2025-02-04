@@ -9,7 +9,7 @@ class Section extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'section_id' , 'name' , 'title'
+        'section_id' , 'name' , 'title' , 'status'
     ];
 
 

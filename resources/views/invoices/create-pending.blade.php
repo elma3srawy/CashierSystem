@@ -45,21 +45,22 @@
                                     @csrf
                                     <div class="card-body">
                                             <div class="form-row">
-                                                <div class="form-group col-md-12">
+                                                <input type="hidden" name="status" value="pending">
+                                                {{-- <div class="form-group col-md-12">
                                                     <label for="inputState5" style="font-weight: bold; margin-bottom: 10px; font-family: 'Poppins', sans-serif;">نوع الفاتورة</label>
                                                     <select name="status" id="inputState5" class="form-control" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; color: #000; font-family: 'Poppins', sans-serif; font-weight: 400;">
                                                         <option selected value="pending" style="font-weight: 500;">ايجار</option>
                                                         <option value="inactive" style="font-weight: 500;">بيع</option>
                                                     </select>
-                                                </div>
+                                                </div> --}}
                                                 <div class="form-group col-md-6">
-                                                    <div id="dateContainer1" class="input-group">
+                                                    <div id="dateContainer1">
                                                     <label for="gregorianDate1" class="form-label">تاريخ الاستلام:</label>
                                                     <input type="text" id="gregorianDate1" value="{{ old('date_of_receipt') }}" name="date_of_receipt" class="form-control" placeholder="yyyy-mm-dd">
                                                 </div>
                                                 </div>
                                                 <div class="form-group col-md-6">
-                                                    <div id="dateContainer2" class="input-group">
+                                                    <div id="dateContainer2">
                                                         <label for="gregorianDate2" class="form-label">تاريخ الرجوع:</label>
                                                         <input type="text" id="gregorianDate2" value="{{ old('return_date') }}" name="return_date" class="form-control" placeholder="yyyy-mm-dd">
                                                     </div>
@@ -333,7 +334,7 @@ $(document).ready(function() {
             var product_id = sectionId.replace('section', 'product');
             var dateOfReceipt = $('#gregorianDate1').val();
             var returnDate = $('#gregorianDate2').val();
-            var status = $('#inputState5').val();
+            var status = $('#inputState5').val() || "pending";
             if(section_id){
                 getProductData(section_id, product_id, dateOfReceipt, returnDate , status);
             }else{
@@ -359,7 +360,7 @@ $(document).ready(function() {
             var productID = $('[data-repeater-product]').attr('id'); // Get the product ID
             var dateOfReceipt = $('#gregorianDate1').val(); // Get the value of the dateOfReceipt field
             var returnDate = $('#gregorianDate2').val(); // Get the value of the returnDate field
-            var status = $('#inputState5').val(); // Get the value of the status field
+            var status = $('#inputState5').val() || "pending"; // Get the value of the status field
 
 
             if((sectionId) && (productID || SecId)){
@@ -547,5 +548,39 @@ document.addEventListener('DOMContentLoaded', function() {
         button.textContent = 'جاري تنفيذ طلبك';
     });
 </script>
+
+{{-- <script>
+    document.getElementById('inputState5').addEventListener('change', function() {
+        fetch(`{{ route('get.sections' , ['status' => 1])}}`)
+        .then(response => response.json()) // Parse JSON response
+        .then(data => console.log(data)) // Handle the data
+        .catch(error => console.error("Error:", error)); // Handle errors
+    });
+</script> --}}
+{{-- <script>
+    document.getElementById('inputState5').addEventListener('change', function() {
+        fetch(`{{ route('get.sections', ['status' => 1]) }}`)
+        .then(response => response.json()) // Parse JSON response
+        .then(data => {
+            const parentSelect = document.querySelectorAll('[data-repeater-parent]');
+            console.log(parentSelect);
+            console.log(1);
+            // document.querySelectorAll('[data-repeater-parent]').forEach(select => {
+            //     console.log(select.value);
+            // });
+
+            // parentSelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>'; // Clear old options
+
+            // data.forEach(section => {
+            //     const option = document.createElement('option');
+            //     option.value = section.id;
+            //     option.textContent = section.name;
+            //     parentSelect.appendChild(option);
+            // });
+        })
+        .catch(error => console.error("Error:", error)); // Handle errors
+    });
+</script> --}}
+
 @endsection
 

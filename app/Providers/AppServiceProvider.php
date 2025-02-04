@@ -25,7 +25,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
-        View::share('sections', Section::whereNull('section_id')->get());
+        View::share('sections',
+            Section::whereNull('section_id')
+            // ->whereDoesntHave("products")
+            ->get()
+        );
+
+        View::composer('layouts.content', function ($view) {
+            $sections = Section::whereNull('section_id')
+                ->whereDoesntHave("products")
+                ->get();
+            $view->with('parent_sections', $sections);
+        });
         // Order::observe(OrderObserver::class);
     }
 }

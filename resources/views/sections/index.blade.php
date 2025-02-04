@@ -39,6 +39,7 @@
                       <th>اسم القسم</th>
                       <th>عدد الاقسام الفرعية</th>
                       <th>عدد المنتجات</th>
+                      <th>الحالة</th>
                       <th>تاريخ الانشاء</th>
                       <th class="text-center">العملية</th>
                     </tr>
@@ -62,6 +63,11 @@
                                 <b>{{ "لا يوجد"}}</b>
                             @endif
                         </td>
+                        @if ($section->status)
+                        <td style="font-size: 18px; font-weight: bold; color: green; text-decoration: none;">{{ "ايجار" }}</td>
+                        @else
+                            <td style="font-size: 18px; font-weight: bold; color: red; text-decoration: none;">{{ "بيع" }}</td>
+                        @endif
                         <td>{{ $section->created_at->format('d/m/Y') }}</td>
                         <td class="text-center">
                             <div class="btn-group">

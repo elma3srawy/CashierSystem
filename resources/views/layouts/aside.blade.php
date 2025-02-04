@@ -1,3 +1,26 @@
+<style>
+    /* General styling */
+
+
+/* Dropdown Styling */
+.nav-item.dropdown .nav-link {
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.nav-item.dropdown .nav-link:hover {
+    /* background: #007bff; */
+    /* color: #fff; */
+    /* border-radius: 5px; */
+}
+
+
+
+
+</style>
 <aside class="sidebar-left border-right bg-white shadow" id="leftSidebar" data-simplebar>
     <a href="#" class="btn collapseSidebar toggle-btn d-lg-none text-muted ml-2 mt-3" data-toggle="toggle">
       <i class="fe fe-x"><span class="sr-only"></span></i>
@@ -87,33 +110,56 @@
       </p>
       <ul class="navbar-nav flex-fill w-100 mb-2">
         <li class="nav-item dropdown">
-          <a href="#pages" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+         <a href="#pages" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
             <i class="fe fe-file fe-16"></i>
             <span class="ml-3 item-text">الفواتير</span>
-          </a>
-          <ul class="collapse list-unstyled pl-4 w-100 w-100" id="pages">
-            <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('invoice.create') }}">
-                  <span class="ml-1 item-text">اضافة فاتورة</span>
-                </a>
+        </a>
+        <ul class="collapse list-unstyled pl-4 w-100" id="pages">
+            <li class="nav-item dropdown">
+                <a href="#invoice" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                   <i class="fe fe-plus fe-16"></i>
+                   <span class="ml-3 item-text">اضافة فاتورة</span>
+               </a>
+               <ul class="collapse list-unstyled pl-4 w-100" id="invoice">
+                   <li class="nav-item">
+                     <a class="nav-link pl-3" href="{{ route('invoice.create.pending') }}">
+                       <span class="ml-1 item-text">فاتورة ايجار</span>
+                     </a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link pl-3" href="{{ route('invoice.create.inactive') }}">
+                       <span class="ml-1 item-text">فاتورة بيع</span>
+                     </a>
+                   </li>
+               </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link pl-3" href="{{ route('invoice.index') }}">
-                <span class="ml-1 item-text">عرض جميع الفواتير</span>
-              </a>
+            <li class="nav-item dropdown">
+                <a href="#show" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                   <i class="fe fe-eye fe-16"></i>
+                   <span class="ml-3 item-text">عرض</span>
+               </a>
+               <ul class="collapse list-unstyled pl-4 w-100" id="show">
+                <li class="nav-item">
+                    <a class="nav-link pl-3" href="{{ route('invoice.index') }}">
+                      <span class="ml-1 item-text">جميع الفواتير</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link pl-3" href="{{ route('invoice.pending') }}">
+                      <span class="ml-1 item-text">فواتير الايجار</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link pl-3" href="{{ route('invoice.inactive') }}">
+                      <span class="ml-1 item-text">فواتير البيع</span>
+                    </a>
+                  </li>
+               </ul>
             </li>
-            <li class="nav-item">
-              <a class="nav-link pl-3" href="{{ route('invoice.pending') }}">
-                <span class="ml-1 item-text">عرض فواتير الايجار</span>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link pl-3" href="{{ route('invoice.inactive') }}">
-                <span class="ml-1 item-text">عرض فواتير البيع</span>
-              </a>
-            </li>
-          </ul>
+
+        </ul>
         </li>
+
 
         <!-- Separate block for sales -->
         @can('access-superAdmin')
@@ -290,3 +336,14 @@
       </ul>
     </nav>
   </aside>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    let addInvoiceBtn = document.querySelector(".add-invoice");
+    let submenu = document.querySelector(".submenu");
+
+    addInvoiceBtn.addEventListener("click", function () {
+        submenu.style.display = (submenu.style.display === "block") ? "none" : "block";
+    });
+});
+
+</script>

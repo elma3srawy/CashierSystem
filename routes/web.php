@@ -42,7 +42,6 @@ Route::controller(AuthenticatedSessionController::class)->group(function(){
 Route::middleware('auth')->group(function(){
     Route::get('/', [DashboardController::class ,'__invoke'])->name('dashboard');
 
-    Route::resource('/invoice', InvoiceController::class);
 
     Route::get('/invoice/{id}/print', [InvoiceController::class, 'print'])->name('invoice.print');
     Route::get('/get-products', [InvoiceController::class, 'getProductData'])->name('invoice.get.product');
@@ -50,9 +49,14 @@ Route::middleware('auth')->group(function(){
     Route::get('/invoices/pending', [InvoiceController::class, 'pending'])->name('invoice.pending');
     Route::get('/invoices/inactive', [InvoiceController::class, 'inactive'])->name('invoice.inactive');
     Route::get('/invoices/search', [InvoiceController::class, 'search'])->name('invoice.search');
+    Route::get('/invoices/create/pending', [InvoiceController::class, 'createPending'])->name('invoice.create.pending');
+    Route::get('/invoices/create/inactive', [InvoiceController::class, 'createInactive'])->name('invoice.create.inactive');
+
+    Route::resource('/invoice', InvoiceController::class)->except('create');
 
     Route::middleware('super.admin')->group(function(){
 
+        Route::post('/section-change-status/{section}' , [SectionsController::class , "changeStatus"]);
         Route::resource('/section' ,SectionsController::class);
 
         Route::resource('/products', ProductController::class)->except(['index' , 'create']);

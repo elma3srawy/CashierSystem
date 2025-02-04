@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Section;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,3 +18,11 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+
+
+Artisan::command('update-section-status', function () {
+    Section::whereNull('section_id')->update(["status" => 1]);
+})->purpose('Update all sections\' status to 1');
+
+

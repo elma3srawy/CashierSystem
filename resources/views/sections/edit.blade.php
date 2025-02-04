@@ -35,6 +35,15 @@
                         <label for="title">* العنوان</label>
                         <input id="title" name="title" type="text" class="form-control required" value="{{ $section->title }}">
                     </div>
+                    @if(!$section->section_id)
+                    <div class="form-group">
+                        <label for="status">* الحالة</label>
+                        <select id="status" name="status" class="form-control required">
+                            <option value="1" {{ $section->status == 1 ? 'selected' : '' }}>ايجار</option>
+                            <option value="0" {{ $section->status == 0 ? 'selected' : '' }}>بيع</option>
+                        </select>
+                    </div>
+                    @endif
                     <button type="submit" class="btn btn-primary">حفظ</button>
                 </section>
             </div>

@@ -78,7 +78,7 @@
             </div>
             <form action="{{ route('admin.changeRole') }}" method="POST">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body-1" style="padding: 10px">
                     <div class="form-group">
                         <label for="password">كلمة السر:</label>
                         <input type="password" name="secret" class="form-control" id="password" required>

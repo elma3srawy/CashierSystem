@@ -168,11 +168,11 @@ class InvoiceController extends Controller
             DB::commit();
 
             event(new InvoiceProcessed($invoice));
-            return back()->with('success' , 'Invoice updated successfully');
+            return back()->with('success' , 'تم تحديث الفاتورة بنجاح');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error',$e->getMessage());
+            return back()->with('error',"خطا");
         }
     }
 
@@ -181,13 +181,6 @@ class InvoiceController extends Controller
      */
     public function store(InvoiceRequest $request)
     {
-        if($request->status == "pending")
-        {
-            $request->validate([
-                'date_of_receipt' => ['required' , 'date' , 'date_format:Y-m-d' ],
-                'return_date' => ['required' , 'date' , 'date_format:Y-m-d' ]
-            ]);
-        }
         DB::beginTransaction();
         try
         {
@@ -222,7 +215,7 @@ class InvoiceController extends Controller
             return to_route('invoice.print' , $invoice->id)->with("success" ,'تم اضافة فاتورة بنجاح' );
         }catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error','Failed to insert order');
+            return back()->with('error','خطا');
         }
 
     }
@@ -313,7 +306,7 @@ class InvoiceController extends Controller
 
 
         event(new InvoiceProcessed($invoice));
-        return back()->with('success' , 'Invoice Delete Successfully');
+        return back()->with('success' , 'تم حذف الفاتورة بنجاح');
     }
     public function restore(string $id)
     {
@@ -336,7 +329,7 @@ class InvoiceController extends Controller
         foreach($ids as $id){
             Product::whereId($id->product_id)->increment('quantity');
         }
-        return back()->with('success' , 'Product restore successfully');
+        return back()->with('success' , 'تم استرجاع المنتج في المخزن بنجاح');
     }
 
     public function search(Request $request)
@@ -443,7 +436,7 @@ class InvoiceController extends Controller
             $invoice = Invoice::where('id', $request->invoice_id)->withTrashed()->first();
             event(new InvoiceProcessed($invoice));
             DB::commit();
-            return back()->with('success' , 'Order updated successfully');
+            return back()->with('success' , 'تم تحديث الفاتوره بنجاح');
         }catch(\Exception){
             DB::rollback();
             return back();

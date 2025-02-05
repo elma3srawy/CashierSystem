@@ -56,7 +56,7 @@ class ProductController extends Controller
         {
             static::upload($request->file('image') , '/products')->storeAs($product, 'image');
         }
-        return back()->with('success' , 'Product Created Successfully!');
+        return back()->with('success' , 'تم انشاء منتج جديد بنجاح!');
     }
 
     /**
@@ -86,7 +86,7 @@ class ProductController extends Controller
             static::updateAs($request->file('image'), '/products', $product, 'image');
         }
         $product->update($validated);
-        return to_route('products.index' , $product->section_id)->with('success', 'Product updated successfully!');
+        return to_route('products.index' , $product->section_id)->with('success', 'تم تحديث المنتج بنجاح');
     }
 
     /**
@@ -94,15 +94,15 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        if($product->orders()->count() > 0){
-            return back()->with('error' , 'Product has invoice!');
-        }
+        // if($product->orders()->count() > 0){
+        //     return back()->with('error' , 'Product has invoice!');
+        // }
         if(!is_null($product->image) && Storage::exists($product->image))
         {
             Storage::delete($product->image);
         }
         $product->delete();
-        return back()->with('success' , 'Product deleted successfully!');
+        return back()->with('success' , 'تم حذف المنتج بنجاح!');
     }
     public function search(Request $request)
     {

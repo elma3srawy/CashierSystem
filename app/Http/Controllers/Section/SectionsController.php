@@ -32,7 +32,7 @@ class SectionsController extends Controller
         $count = !is_null($request->section_id) ? Section::find($request->section_id)->products()->count() : 0;
 
         if($count > 0){
-            return back()->with('error' , 'You Cannot Create Section has products');
+            return back()->with('error' , 'مينفعش تخلي القسم دا قسم رئيسي عشان فيه منتجات');
         }
 
         if(isset($request->section_id) && isset($status))
@@ -42,7 +42,7 @@ class SectionsController extends Controller
 
         Section::create($request->only(['name', 'title' ,'section_id' , 'status']));
 
-        return back()->with('success' , 'Section Created Successfully!');
+        return back()->with('success' , 'تم انشاء قسم جديد بنجاح!');
     }
 
     /**

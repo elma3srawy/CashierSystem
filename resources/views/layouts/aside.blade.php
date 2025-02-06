@@ -73,7 +73,17 @@
       </p>
       <ul class="navbar-nav flex-fill w-100 mb-2">
          {{-- Sections with sub-sections --}}
-        @foreach ($sections as $section)
+    @php
+    $rentSections = App\Models\Section::orderBy('name')->rentSections()->get();
+    $saleSections = App\Models\Section::orderBy('name')->saleSections()->get();
+@endphp
+
+<ul class="navbar-nav flex-fill w-100 mb-2">
+
+    {{-- First Partition: Revet Section --}}
+    <li class="nav-title text-uppercase font-weight-bold p-2">اقسام الايجار</li>
+
+    @foreach ($rentSections as $section)
         @if (count($section->subSection) > 0)
             <li class="nav-item dropdown">
                 <a href="#section-{{ $loop->index }}-collapse" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
@@ -89,10 +99,10 @@
                 </ul>
             </li>
         @endif
-        @endforeach
+    @endforeach
 
         {{-- Sections without sub-sections --}}
-        @foreach ($sections as $section)
+        @foreach ($rentSections as $section)
             @if (count($section->subSection) == 0)
                 <li class="nav-item">
                     <a href="{{ route('products.index' , $section->id) }}" aria-expanded="false" class="nav-link">
@@ -102,8 +112,46 @@
                 </li>
             @endif
         @endforeach
-    </ul>
-    @endcan
+
+    {{-- Divider --}}
+    <hr class="my-3">
+
+    {{-- Second Partition: Sales Section --}}
+    <li class="nav-title text-uppercase font-weight-bold p-2">اقسام البيع</li>
+
+    @foreach ($saleSections as $section)
+    @if (count($section->subSection) > 0)
+        <li class="nav-item dropdown">
+            <a href="#ssection-{{ $loop->index }}-collapse" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                <i class="fe fe-16 fe-layers"></i>
+                <span class="ml-3 item-text">{{ $section->name }}</span>
+            </a>
+            <ul class="collapse list-unstyled pl-4 w-100" id="ssection-{{ $loop->index }}-collapse">
+                @foreach ($section->subSection as $sub)
+                    <li>
+                        <a class="nav-link pl-3 fe fe-4" href="{{ route('products.index' , $sub->id) }}"><span class="ml-1">{{ $sub->name}}</span></a>
+                    </li>
+                @endforeach
+            </ul>
+        </li>
+    @endif
+@endforeach
+
+    {{-- Sections without sub-sections --}}
+    @foreach ($saleSections as $section)
+        @if (count($section->subSection) == 0)
+            <li class="nav-item">
+                <a href="{{ route('products.index' , $section->id) }}" aria-expanded="false" class="nav-link">
+                    <i class="fe fe-4 fe-folder"></i>
+                    <span class="ml-3 item-text">{{ $section->name }}</span>
+                </a>
+            </li>
+        @endif
+    @endforeach
+
+</ul>
+@endcan
+
 
        <p class="text-muted nav-heading mt-4 mb-1">
         <span>الحسابات</span>

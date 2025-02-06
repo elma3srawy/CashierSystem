@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Section extends Model
 {
@@ -21,4 +22,14 @@ class Section extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    public function scopeRentSections($query)
+    {
+        return $query->where('status', 1);
+    }
+    public function scopeSaleSections($query)
+    {
+        return $query->where('status', 0);
+    }
+
 }

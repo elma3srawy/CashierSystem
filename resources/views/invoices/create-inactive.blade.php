@@ -11,6 +11,29 @@
     color: #666;
   }
 </style>
+
+<style>
+    @keyframes fadeInScale {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .invoice-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 36px;
+        font-weight: bold;
+        color: #9b1717;
+        text-align: center;
+        margin-bottom: 5px;
+        animation: fadeInScale 1s ease-in-out;
+    }
+</style>
 {{-- <link rel="stylesheet" href="/asset/css/googleapifont">
     <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Poppins:200,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900"> --}}
@@ -37,6 +60,7 @@
     <div class="row justify-content-center">
       <div class="col-12">
             <!-- row -->
+            <h1 class="invoice-title">فاتورة بيع</h1>
             <div class="row">
                 <div class="col-md-12 mb-30">
                     <div class="card card-statistics h-100">

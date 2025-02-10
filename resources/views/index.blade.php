@@ -40,6 +40,95 @@
               </form>
             </div>
           </div>
+
+          <style>
+            body {
+  /* margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #0f2027;
+  background: -webkit-linear-gradient(to right, #2c5364, #203a43, #0f2027);
+  overflow: hidden; */
+}
+.scope {
+  position: relative;
+  margin-right: 45%;
+  margin-top:10%;
+  margin-bottom:10%;
+  width: 100px;
+  height: 100px;
+  transform-style: preserve-3d;
+  animation: slid 100s linear infinite;
+}
+
+.scope span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  transform-style: preserve-3d;
+  /* transform: rotateY(calc(var(--i) * 45deg)) translateZ(350px); */
+  /* transform: rotateY(calc(var(--i) * (360deg / 15))) translateZ(350px); */
+
+  transform: rotateY(calc(var(--i) * (360deg / 13))) translateZ(300px); /* Increase distance */
+
+}
+.scope span img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  /* transition: 2s; */
+
+
+  transition: transform 0.5s ease, filter 0.5s ease;
+  transform: scale(0.8); /* Zoom out */
+  filter: brightness(1) contrast(1.2); /* Enhance quality */
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  /* backface-visibility: hidden; */
+}
+.scope span:hover img {
+  transform: translateY(-50px) scale(1.4);
+
+
+  filter: brightness(1.1) contrast(1.3);
+}
+@keyframes slid {
+  0% {
+    transform: perspective(1000px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(360deg);
+  }
+}
+
+          </style>
+          <div class="scope">
+            <span style="--i:1;"><img src="{{ asset("assets/images/369608519_715305910611936_2071974660356602067_n.jpg") }}" alt="not found"></span>
+            <span style="--i:2;"><img src="{{ asset("assets/images/369634052_715306160611911_9148697202009380536_n.jpg") }}" alt="not found"></span>
+            <span style="--i:3;"><img src="{{ asset("assets/images/369696226_715305233945337_686961623124533438_n.jpg") }}" alt="not found"></span>
+            <span style="--i:4;"><img src="{{ asset("assets/images/417433652_819721320170394_7147692305644087829_n.jpg") }}" alt="not found"></span>
+            <span style="--i:5;"><img src="{{ asset("assets/images/417434266_825261259616400_1311094147263155911_n.jpg") }}" alt="not found"></span>
+            <span style="--i:6;"><img src="{{ asset("assets/images/419242324_819718790170647_2496107601636502401_n.jpg") }}" alt="not found"></span>
+            <span style="--i:7;"><img src="{{ asset("assets/images/445187153_888681279941064_5607311984724281854_n.jpg") }}" alt="not found"></span>
+            <span style="--i:8;"><img src="{{ asset("assets/images/445209269_888680469941145_490558515476385669_n.jpg") }}" alt="not found"></span>
+            <span style="--i:9;"><img src="{{ asset("assets/images/458715910_957730736369451_6749409908806691456_n.jpg") }}" alt="not found"></span>
+            <span style="--i:10;"><img src="{{ asset("assets/images/459059815_957725806369944_9026820968920122311_n.jpg") }}" alt="not found"></span>
+            <span style="--i:11;"><img src="{{ asset("assets/images/459118080_957730809702777_8629101737066522959_n.jpg") }}" alt="not found"></span>
+            <span style="--i:12;"><img src="{{ asset("assets/images/417463616_819721266837066_3218899972884534843_n.jpg") }}" alt="not found"></span>
+            <span style="--i:13;"><img src="{{ asset("assets/images/369668096_715305843945276_4675073070831254949_n.jpg") }}" alt="not found"></span>
+            <span style="--i:;"><img src="{{ asset("assets/images/374469991_729374059205121_4608627027471515806_n.jpg") }}" alt="not found"></span>
+          </div>
           <!-- info small box -->
           <div class="row">
             <div class="col-md-4 mb-4">

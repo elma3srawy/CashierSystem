@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var oldDateValue1 = gregorianDateInput1.value;
     var oldDateValue2 = gregorianDateInput2.value;
     var initialDate1 = oldDateValue1 ? moment(oldDateValue1).toDate() : today;
-    var initialDate2 = oldDateValue2 ? moment(oldDateValue2).toDate() : moment(today).add(1, 'days').toDate();
+    var initialDate2 = oldDateValue2 ? moment(oldDateValue2).toDate() : moment(today).add(2, 'days').toDate();
 
     // Initialize Pikaday for the second date input
     var picker2 = new Pikaday({

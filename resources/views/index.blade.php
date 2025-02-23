@@ -113,22 +113,7 @@
 }
 
           </style>
-          <div class="scope">
-            <span style="--i:1;"><img src="{{ asset("assets/images/369608519_715305910611936_2071974660356602067_n.jpg") }}" alt="not found"></span>
-            <span style="--i:2;"><img src="{{ asset("assets/images/369634052_715306160611911_9148697202009380536_n.jpg") }}" alt="not found"></span>
-            <span style="--i:3;"><img src="{{ asset("assets/images/369696226_715305233945337_686961623124533438_n.jpg") }}" alt="not found"></span>
-            <span style="--i:4;"><img src="{{ asset("assets/images/417433652_819721320170394_7147692305644087829_n.jpg") }}" alt="not found"></span>
-            <span style="--i:5;"><img src="{{ asset("assets/images/417434266_825261259616400_1311094147263155911_n.jpg") }}" alt="not found"></span>
-            <span style="--i:6;"><img src="{{ asset("assets/images/419242324_819718790170647_2496107601636502401_n.jpg") }}" alt="not found"></span>
-            <span style="--i:7;"><img src="{{ asset("assets/images/445187153_888681279941064_5607311984724281854_n.jpg") }}" alt="not found"></span>
-            <span style="--i:8;"><img src="{{ asset("assets/images/445209269_888680469941145_490558515476385669_n.jpg") }}" alt="not found"></span>
-            <span style="--i:9;"><img src="{{ asset("assets/images/458715910_957730736369451_6749409908806691456_n.jpg") }}" alt="not found"></span>
-            <span style="--i:10;"><img src="{{ asset("assets/images/459059815_957725806369944_9026820968920122311_n.jpg") }}" alt="not found"></span>
-            <span style="--i:11;"><img src="{{ asset("assets/images/459118080_957730809702777_8629101737066522959_n.jpg") }}" alt="not found"></span>
-            <span style="--i:12;"><img src="{{ asset("assets/images/417463616_819721266837066_3218899972884534843_n.jpg") }}" alt="not found"></span>
-            <span style="--i:13;"><img src="{{ asset("assets/images/369668096_715305843945276_4675073070831254949_n.jpg") }}" alt="not found"></span>
-            <span style="--i:;"><img src="{{ asset("assets/images/374469991_729374059205121_4608627027471515806_n.jpg") }}" alt="not found"></span>
-          </div>
+       
           <!-- info small box -->
           <div class="row">
             <div class="col-md-4 mb-4">
@@ -229,6 +214,22 @@
               </div> <!-- /. card -->
             </div> <!-- /. col -->
           </div> <!-- end section -->
+          <div class="scope">
+            <span style="--i:1;"><img src="{{ asset("assets/images/369608519_715305910611936_2071974660356602067_n.jpg") }}" alt="not found"></span>
+            <span style="--i:2;"><img src="{{ asset("assets/images/369634052_715306160611911_9148697202009380536_n.jpg") }}" alt="not found"></span>
+            <span style="--i:3;"><img src="{{ asset("assets/images/369696226_715305233945337_686961623124533438_n.jpg") }}" alt="not found"></span>
+            <span style="--i:4;"><img src="{{ asset("assets/images/417433652_819721320170394_7147692305644087829_n.jpg") }}" alt="not found"></span>
+            <span style="--i:5;"><img src="{{ asset("assets/images/417434266_825261259616400_1311094147263155911_n.jpg") }}" alt="not found"></span>
+            <span style="--i:6;"><img src="{{ asset("assets/images/419242324_819718790170647_2496107601636502401_n.jpg") }}" alt="not found"></span>
+            <span style="--i:7;"><img src="{{ asset("assets/images/445187153_888681279941064_5607311984724281854_n.jpg") }}" alt="not found"></span>
+            <span style="--i:8;"><img src="{{ asset("assets/images/445209269_888680469941145_490558515476385669_n.jpg") }}" alt="not found"></span>
+            <span style="--i:9;"><img src="{{ asset("assets/images/458715910_957730736369451_6749409908806691456_n.jpg") }}" alt="not found"></span>
+            <span style="--i:10;"><img src="{{ asset("assets/images/459059815_957725806369944_9026820968920122311_n.jpg") }}" alt="not found"></span>
+            <span style="--i:11;"><img src="{{ asset("assets/images/459118080_957730809702777_8629101737066522959_n.jpg") }}" alt="not found"></span>
+            <span style="--i:12;"><img src="{{ asset("assets/images/417463616_819721266837066_3218899972884534843_n.jpg") }}" alt="not found"></span>
+            <span style="--i:13;"><img src="{{ asset("assets/images/369668096_715305843945276_4675073070831254949_n.jpg") }}" alt="not found"></span>
+            <span style="--i:;"><img src="{{ asset("assets/images/374469991_729374059205121_4608627027471515806_n.jpg") }}" alt="not found"></span>
+          </div>
           <div class="row">
             <div class="col-md-6 col-xl-3 mb-4">
               <div class="card shadow">

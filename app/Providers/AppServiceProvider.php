@@ -8,6 +8,8 @@ use App\Observers\OrderObserver;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Resources\Json\JsonResource;
+
 define('PAGINATE' , 15);
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        JsonResource::withoutWrapping();
+
         Paginator::useBootstrap();
         View::share('sections',
             Section::whereNull('section_id')

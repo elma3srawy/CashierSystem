@@ -9,15 +9,18 @@ use App\Models\Invoice;
 use App\Models\Product;
 use App\Models\Section;
 use App\Models\Addition;
-use App\Events\RegisterOrderPricing;
 use Illuminate\Http\Request;
 use App\Events\InvoiceProcessed;
+use App\Traits\InvoiceProcessing;
 use Illuminate\Support\Facades\DB;
+use App\Events\RegisterOrderPricing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
 
 class InvoiceController extends Controller
 {
+    use InvoiceProcessing;
+
     private $invoice;
 
 
@@ -31,9 +34,19 @@ class InvoiceController extends Controller
     public function index()
     {
         $invoices = Invoice::withTrashed()
-        ->with(['client','orders'])
+        ->with(['client', 'orders' => function ($query) {
+            $query->orderByRaw('IF(orders.payment < orders.price, 1, 0) DESC')
+                ->orderBy('orders.created_at', 'desc');
+        }])
+        ->selectRaw('invoices.*, 
+            (SELECT SUM(orders.price) FROM orders WHERE orders.invoice_id = invoices.id) as total_price, 
+            (SELECT SUM(orders.payment) FROM orders WHERE orders.invoice_id = invoices.id) as total_payment'
+        )
         ->orderByRaw('ISNULL(restored_at) DESC')
+        ->orderByRaw('IF(total_payment < total_price, 1, 0) DESC') // Prioritize invoices with unpaid amounts
+        ->orderBy('invoices.created_at', 'desc')
         ->paginate(PAGINATE);
+
         return view('invoices.index' , ['invoices' => $invoices]);
     }
 
@@ -167,7 +180,7 @@ class InvoiceController extends Controller
             }
             DB::commit();
 
-            event(new InvoiceProcessed($invoice));
+            // event(new InvoiceProcessed($invoice));
             return back()->with('success' , 'تم تحديث الفاتورة بنجاح');
 
         } catch (\Exception $e) {
@@ -210,7 +223,7 @@ class InvoiceController extends Controller
                     event(new RegisterOrderPricing($order->id , $order->payment));
                 }
             }
-            event(new InvoiceProcessed($invoice));
+            // event(new InvoiceProcessed($invoice));
             DB::commit();
             return to_route('invoice.print' , $invoice->id)->with("success" ,'تم اضافة فاتورة بنجاح' );
         }catch (\Exception $e) {
@@ -305,7 +318,7 @@ class InvoiceController extends Controller
         }
 
 
-        event(new InvoiceProcessed($invoice));
+        // event(new InvoiceProcessed($invoice));
         return back()->with('success' , 'تم حذف الفاتورة بنجاح');
     }
     public function restore(string $id)
@@ -401,13 +414,38 @@ class InvoiceController extends Controller
 
     public function pending()
     {
-        $invoices = Invoice::withTrashed()->where('status' ,'pending')->with(['client','orders'])->orderByRaw('ISNULL(restored_at) DESC')->paginate(PAGINATE);
+        // $invoices = Invoice::withTrashed()
+        // ->where('status' ,'pending')
+        // ->with(['client','orders'])
+        // ->orderByRaw('ISNULL(restored_at) DESC')
+        // ->paginate(PAGINATE);
+        $invoices = $this->getInvoiceByStatus('pending');
+
         return view('invoices.pending' , ['invoices' => $invoices]);
     }
     public function inactive()
     {
-        $invoices = Invoice::withTrashed()->where('status' ,'inactive')->with(['client','orders'])->orderByRaw('ISNULL(restored_at) DESC')->paginate(PAGINATE);
+        $invoices = $this->getInvoiceByStatus('inactive');
+        // $invoices = Invoice::withTrashed()->where('status' ,'inactive')->with(['client','orders'])->orderByRaw('ISNULL(restored_at) DESC')->paginate(PAGINATE);
         return view('invoices.inactive' , ['invoices' => $invoices]);
+    }
+
+    private function getInvoiceByStatus($status)
+    {
+        return Invoice::withTrashed()
+        ->with(['client', 'orders' => function ($query) {
+            $query->orderByRaw('IF(orders.payment < orders.price, 1, 0) DESC')
+                ->orderBy('orders.created_at', 'desc');
+        }])
+        ->where('status' , $status)
+        ->selectRaw('invoices.*, 
+            (SELECT SUM(orders.price) FROM orders WHERE orders.invoice_id = invoices.id) as total_price, 
+            (SELECT SUM(orders.payment) FROM orders WHERE orders.invoice_id = invoices.id) as total_payment'
+        )
+        ->orderByRaw('ISNULL(restored_at) DESC')
+        ->orderByRaw('IF(total_payment < total_price, 1, 0) DESC') // Prioritize invoices with unpaid amounts
+        ->orderBy('invoices.created_at', 'desc')
+        ->paginate(PAGINATE);
     }
 
     // public function createOrder()
@@ -434,7 +472,7 @@ class InvoiceController extends Controller
             $order->update(['payment' => $request->payment]);
 
             $invoice = Invoice::where('id', $request->invoice_id)->withTrashed()->first();
-            event(new InvoiceProcessed($invoice));
+            // event(new InvoiceProcessed($invoice));
             DB::commit();
             return back()->with('success' , 'تم تحديث الفاتوره بنجاح');
         }catch(\Exception){

@@ -46,6 +46,62 @@
           </a>
         </li>
       </ul>
+
+
+      <p class="text-muted nav-heading mt-4 mb-1">
+        <span>الفواتير</span>
+      </p>
+      <ul class="navbar-nav flex-fill w-100 mb-2">
+        <li class="nav-item dropdown">
+         <a href="#pages" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+            <i class="fe fe-file fe-16"></i>
+            <span class="ml-3 item-text">الفواتير</span>
+        </a>
+        <ul class="collapse list-unstyled pl-4 w-100" id="pages">
+            <li class="nav-item dropdown">
+                <a href="#invoice" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                   <i class="fe fe-plus fe-16"></i>
+                   <span class="ml-3 item-text">اضافة فاتورة</span>
+               </a>
+               <ul class="collapse list-unstyled pl-4 w-100" id="invoice">
+                   <li class="nav-item">
+                     <a class="nav-link pl-3" href="{{ route('invoice.create.pending') }}">
+                       <span class="ml-1 item-text">فاتورة ايجار</span>
+                     </a>
+                   </li>
+                   <li class="nav-item">
+                     <a class="nav-link pl-3" href="{{ route('invoice.create.inactive') }}">
+                       <span class="ml-1 item-text">فاتورة بيع</span>
+                     </a>
+                   </li>
+               </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#show" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+                   <i class="fe fe-eye fe-16"></i>
+                   <span class="ml-3 item-text">عرض</span>
+               </a>
+               <ul class="collapse list-unstyled pl-4 w-100" id="show">
+                <li class="nav-item">
+                    <a class="nav-link pl-3" href="{{ route('invoice.index') }}">
+                      <span class="ml-1 item-text">جميع الفواتير</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link pl-3" href="{{ route('invoice.pending') }}">
+                      <span class="ml-1 item-text">فواتير الايجار</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link pl-3" href="{{ route('invoice.inactive') }}">
+                      <span class="ml-1 item-text">فواتير البيع</span>
+                    </a>
+                  </li>
+               </ul>
+            </li>
+
+        </ul>
+        </li>
       @can('access-superAdmin')
       <p class="text-muted nav-heading mt-4 mb-1">
         <span>المحتوي</span>
@@ -150,147 +206,65 @@
     @endforeach
 
 </ul>
-@endcan
-
-
-       <p class="text-muted nav-heading mt-4 mb-1">
-        <span>الحسابات</span>
-      </p>
-      <ul class="navbar-nav flex-fill w-100 mb-2">
-        <li class="nav-item dropdown">
-         <a href="#pages" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-            <i class="fe fe-file fe-16"></i>
-            <span class="ml-3 item-text">الفواتير</span>
+<p class="text-muted nav-heading mt-4 mb-1">
+    <span>الحسابات</span>
+  </p>
+  <ul class="navbar-nav flex-fill w-100 mb-2">
+    <li class="nav-item dropdown">
+    <a href="#sales" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+        <i class="fe fe-dollar-sign fe-16"></i>
+        <span class="ml-3 item-text">الحسابات</span>
+    </a>
+    <ul class="collapse list-unstyled pl-4 w-100" id="sales">
+        <li class="nav-item">
+        <a class="nav-link pl-3" href="{{ route('sales.index') }}">
+            <span class="ml-1 item-text">الكل</span>
         </a>
-        <ul class="collapse list-unstyled pl-4 w-100" id="pages">
-            <li class="nav-item dropdown">
-                <a href="#invoice" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                   <i class="fe fe-plus fe-16"></i>
-                   <span class="ml-3 item-text">اضافة فاتورة</span>
-               </a>
-               <ul class="collapse list-unstyled pl-4 w-100" id="invoice">
-                   <li class="nav-item">
-                     <a class="nav-link pl-3" href="{{ route('invoice.create.pending') }}">
-                       <span class="ml-1 item-text">فاتورة ايجار</span>
-                     </a>
-                   </li>
-                   <li class="nav-item">
-                     <a class="nav-link pl-3" href="{{ route('invoice.create.inactive') }}">
-                       <span class="ml-1 item-text">فاتورة بيع</span>
-                     </a>
-                   </li>
-               </ul>
-            </li>
-            <li class="nav-item dropdown">
-                <a href="#show" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                   <i class="fe fe-eye fe-16"></i>
-                   <span class="ml-3 item-text">عرض</span>
-               </a>
-               <ul class="collapse list-unstyled pl-4 w-100" id="show">
-                <li class="nav-item">
-                    <a class="nav-link pl-3" href="{{ route('invoice.index') }}">
-                      <span class="ml-1 item-text">جميع الفواتير</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link pl-3" href="{{ route('invoice.pending') }}">
-                      <span class="ml-1 item-text">فواتير الايجار</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link pl-3" href="{{ route('invoice.inactive') }}">
-                      <span class="ml-1 item-text">فواتير البيع</span>
-                    </a>
-                  </li>
-               </ul>
-            </li>
-
-        </ul>
         </li>
+        <li class="nav-item">
+        <a class="nav-link pl-3" href="{{ route('sales.pending') }}">
+            <span class="ml-1 item-text">الايجار</span>
+        </a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link pl-3" href="{{ route('sales.inactive') }}">
+            <span class="ml-1 item-text">البيع</span>
+        </a>
+        </li>
+    </ul>
+    </li>
+</ul>
+<ul class="navbar-nav flex-fill w-100 mb-2">
+    <li class="nav-item dropdown">
+    <a href="#archive" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+        <i class="fe fe-archive fe-16"></i>
+        <span class="ml-3 item-text">الارشيف</span>
+    </a>
+    <ul class="collapse list-unstyled pl-4 w-100" id="archive">
+        <li class="nav-item">
+        <a class="nav-link pl-3" href="{{ route('sales.archive.all') }}">
+            <span class="ml-1 item-text">الكل</span>
+        </a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link pl-3" href="{{ route('sales.archive.pending') }}">
+            <span class="ml-1 item-text">الايجار</span>
+        </a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link pl-3" href="{{ route('sales.archive.inactive') }}">
+            <span class="ml-1 item-text">البيع</span>
+        </a>
+        </li>
+    </ul>
+    </li>
+</ul>
+    </li>
 
-
-        <!-- Separate block for sales -->
-        @can('access-superAdmin')
-        <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item dropdown">
-            <a href="#sales" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                <i class="fe fe-dollar-sign fe-16"></i>
-                <span class="ml-3 item-text">الحسابات</span>
-            </a>
-            <ul class="collapse list-unstyled pl-4 w-100" id="sales">
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.index') }}">
-                    <span class="ml-1 item-text">الكل</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.pending') }}">
-                    <span class="ml-1 item-text">الايجار</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.inactive') }}">
-                    <span class="ml-1 item-text">البيع</span>
-                </a>
-                </li>
-            </ul>
-            </li>
-        </ul>
-        <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item dropdown">
-            <a href="#archive" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                <i class="fe fe-archive fe-16"></i>
-                <span class="ml-3 item-text">الارشيف</span>
-            </a>
-            <ul class="collapse list-unstyled pl-4 w-100" id="archive">
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.archive.all') }}">
-                    <span class="ml-1 item-text">الكل</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.archive.pending') }}">
-                    <span class="ml-1 item-text">الايجار</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.archive.inactive') }}">
-                    <span class="ml-1 item-text">البيع</span>
-                </a>
-                </li>
-            </ul>
-            </li>
-        </ul>
-
-        <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item dropdown">
-            <a href="#salestest" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                <i class="fe fe-dollar-sign fe-16"></i>
-                <span class="ml-3 item-text">الحسابات</span>
-            </a>
-            <ul class="collapse list-unstyled pl-4 w-100" id="salestest">
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.test.index') }}">
-                    <span class="ml-1 item-text">الكل</span>
-                </a>
-                {{-- </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.pending') }}">
-                    <span class="ml-1 item-text">الايجار</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.inactive') }}">
-                    <span class="ml-1 item-text">البيع</span>
-                </a>
-                </li> --}}
-            </ul>
-            </li>
-        </ul>
         <ul class="navbar-nav flex-fill w-100 mb-2">
             <li class="nav-item dropdown">
             <a href="#deposits" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                <i class="fe fe-dollar-sign fe-16"></i>
+                <i class="fe fe-inbox fe-16"></i>
                 <span class="ml-3 item-text">العربونات</span>
             </a>
             <ul class="collapse list-unstyled pl-4 w-100" id="deposits">
@@ -298,75 +272,26 @@
                 <a class="nav-link pl-3" href="{{ route('sales.deposit') }}">
                     <span class="ml-1 item-text">الكل</span>
                 </a>
-                {{-- </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.pending') }}">
-                    <span class="ml-1 item-text">الايجار</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.inactive') }}">
-                    <span class="ml-1 item-text">البيع</span>
-                </a>
-                </li> --}}
             </ul>
             </li>
         </ul>
-        @endcan
-        <!-- Separate block for sales -->
-        {{-- @can('access-superAdmin')
-        <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item dropdown">
-            <a href="#sales" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                <i class="fe fe-dollar-sign fe-16"></i>
-                <span class="ml-3 item-text">الحسابات</span>
-            </a>
-            <ul class="collapse list-unstyled pl-4 w-100" id="sales">
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.weekly.index') }}">
-                    <span class="ml-1 item-text">الكل</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.weekly.pending') }}">
-                    <span class="ml-1 item-text">الايجار</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.weekly.inactive') }}">
-                    <span class="ml-1 item-text">البيع</span>
-                </a>
-                </li>
-            </ul>
-            </li>
-        </ul>
-        <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item dropdown">
-            <a href="#archive" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
-                <i class="fe fe-archive fe-16"></i>
-                <span class="ml-3 item-text">الارشيف</span>
-            </a>
-            <ul class="collapse list-unstyled pl-4 w-100" id="archive">
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.weekly.archive.all') }}">
-                    <span class="ml-1 item-text">الكل</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.weekly.archive.pending') }}">
-                    <span class="ml-1 item-text">الايجار</span>
-                </a>
-                </li>
-                <li class="nav-item">
-                <a class="nav-link pl-3" href="{{ route('sales.weekly.archive.inactive') }}">
-                    <span class="ml-1 item-text">البيع</span>
-                </a>
-                </li>
-            </ul>
-            </li>
-        </ul>
-        @endcan --}}
 
+        <p class="text-muted nav-heading mt-4 mb-1">
+            <span>اخري</span>
+        </p>
+        <ul class="navbar-nav flex-fill w-100 mb-2">
+        <li class="nav-item dropdown">
+            <a href="#recent" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle nav-link">
+              <i class="fe fe-clipboard fe-16"></i>
+              <span class="ml-3 item-text">اخر الفواتير</span>
+            </a>
+            <ul class="collapse list-unstyled pl-4 w-100" id="recent">
+              <a class="nav-link pl-3" href="{{ route('recent.invoices') }}"><span class="ml-1">عرض</span></a>
+            </ul>
+          </li>
+        </ul>
+
+        @endcan
         <p class="text-muted nav-heading mt-4 mb-1">
             <span>العملاء</span>
         </p>

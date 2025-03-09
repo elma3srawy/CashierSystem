@@ -189,7 +189,7 @@
                                             <br>
                                         </div>
 
-                                        <div class="repeater">
+                                        <div class="repeater-1">
                                             <div data-repeater-list="list-product-1">
                                                 <div data-repeater-item>
                                                     <div class="form-row">
@@ -203,11 +203,11 @@
                                                             </div>
                                                             <div class="form-group col-md-2">
                                                               <label for="price">السعر النهائي</label>
-                                                              <input data-repeater-price type="text" name="price" class="form-control" id="price">
+                                                              <input data-repeater-price type="text" name="price" class="form-control" id="price_">
                                                             </div>
                                                             <div class="form-group col-md-2">
                                                               <label for="payment">دفع</label>
-                                                              <input data-repeater-payment type="text" name="payment" class="form-control"  id="payment">
+                                                              <input data-repeater-payment type="text" name="payment" class="form-control"  id="payment_">
                                                             </div>
                                                         <div class="col text-center">
                                                             <label for="" class="mr-sm-2">العمليات:</label>
@@ -275,11 +275,21 @@
     </script>
 {{-- <script src="/assets/js/jquery-3.3.1.min.js"></script> --}}
 <script src="/assets/js/plugins-jquery.js"></script>
+<script src="/assets/js/moment.min.js"></script>
+<script src="/assets/js/pikaday.js"></script>
+
+<script>
+    document.getElementById('myForm').addEventListener('submit', function(event) {
+        var button = event.target.querySelector('button[type="submit"]');
+        button.disabled = true;
+        button.textContent = 'جاري تنفيذ طلبك';
+    });
+</script>
 <script>
 $(document).ready(function() {
-        var counter = 0;
+    var counter = 0;
         // Initialize the repeater plugin
-        $('.repeater').repeater({
+        var repeater = $('.repeater').repeater({
             initEmpty: true,
             show: function () {
                 // Increment counter
@@ -306,6 +316,222 @@ $(document).ready(function() {
             }
         });
 
+        var repeater1 = $('.repeater-1').repeater({
+            initEmpty: true,
+            show: function () {
+                // Increment counter
+                // Get the current repeater item
+                var $item = $(this);
+
+                // // Assign unique IDs to the new item
+                $item.find('[data-action="confirm"]').attr('id', `confirm-button-${counter}`);
+                $item.find('[data-repeater-edit]').attr('id', `edit-button-${counter}`);
+                $item.find('[data-repeater-delete]').attr('id', `delete-button-${counter}`);
+                // $item.find('select[id^="parent"]').attr('id', `parent-${counter}`);
+                // $item.find('select[id^="section"]').attr('id', `section-${counter}`);
+                // $item.find('select[id^="product"]').attr('id', `product-${counter}`);
+                $item.find('input[id^="title"]').attr('id', `title-${counter}`);
+                $item.find('input[id^="data"]').attr('id', `data-${counter}`);
+                $item.find('input[id^="price_"]').attr('id', `price_-${counter}`);
+                $item.find('input[id^="payment_"]').attr('id', `payment_-${counter}`);
+                $item.find('[data-repeater-edit]').prop('disabled', true);
+                counter++;
+                $(this).slideDown();
+            },
+            hide: function (deleteElement) {
+                $(this).slideUp(deleteElement);
+            }
+        });
+
+
+
+        var oldData1 = {!! json_encode(old('list-product-1', [])) !!};
+        var oldData = {!! json_encode(old('list-product', [])) !!};
+
+        // console.log(oldData1);
+        // console.log(oldData);
+
+        if (oldData.length > 0) {
+            let repeaterData = oldData.map(function (data, index) {
+                let sectionId = 'section-' + index;
+                let productId = 'product-' + index;
+
+                getSection(data.parent_id, sectionId, function () {
+                    let sectionSelect = $('#' + sectionId);
+                    let options = sectionSelect.find('option');
+
+                    if (options.length > 0) {
+                        sectionSelect.val(data.section_id).trigger('change');
+
+                        getProductData(
+                            data.section_id || data.parent_id,
+                            productId,
+                            data.date_of_receipt,
+                            data.return_date,
+                            data.product_id,
+                            function () {
+                                let productSelect = $('#' + productId);
+                                let productOptions = productSelect.find('option');
+
+                                if (productOptions.length === 0) {
+                                    // Retry getProductData if product not loaded
+                                    getProductData(
+                                        data.section_id || data.parent_id,
+                                        productId,
+                                        data.date_of_receipt,
+                                        data.return_date,
+                                        data.product_id,
+                                        null,
+                                        10 // Retry up to 10 times
+                                    );
+                                } else {
+                                    productSelect.val(data.product_id).trigger('change');
+                                }
+                            },
+                            10 // Initial retry count for getProductData
+                        );
+                    } else {
+                        // Retry getSection if section select didn't populate
+                        getSection(data.parent_id, sectionId, null, 10);
+                    }
+
+                }, 10); // Initial retry count for getSection
+
+                return {
+                    parent_id: data.parent_id || data.section_id,
+                    section_id: data.section_id,
+                    product_id: data.product_id,
+                    price: data.price,
+                    payment: data.payment
+                };
+            });
+
+            repeater.setList(repeaterData);
+        }
+        if (oldData1.length > 0) {
+            let repeaterData1 = oldData1.map(function (data) {
+                return { title: data.title, data: data.data, 'price' : data.price , 'payment': data.payment};
+            });
+
+            repeater1.setList(repeaterData1);
+        }
+
+        // Function to get section list
+        function getSection(parentId, SecId, callback , retryCount = 0) {
+            var url = "{{ route('invoice.get.section') }}";
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: { parent_id: parentId },
+                dataType: 'json',
+                success: function (response) {
+                    var sectionSelect = $('#' + SecId);
+                    sectionSelect.empty();
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (index, section) {
+                            sectionSelect.append('<option value="' + section.id + '">' + section.name + '</option>');
+                        });
+                    } else {
+                        sectionSelect.append('<option value="" disabled>لا يوجد اقسام فرعية داخل القسم</option>');
+                    }
+
+                    // Execute the callback after populating the dropdown
+                    if (typeof callback === "function") {
+                        callback();
+                    }
+
+                    sectionSelect.trigger('change');
+                },
+                error: function () {
+                    if (retryCount > 0) {
+                        // console.warn("Request failed. Retrying... (" + (11 - retryCount) + "/10)");
+                        setTimeout(function () {
+                            getSection(parentId, SecId, callback , retryCount - 1);
+                        }, 1000);
+                    }
+                }
+            });
+        }
+
+
+
+        // Function to get product list
+        function getProductData(sectionId, productID,  dateOfReceipt ,returnDate, oldProductId, callback, retryCount = 0) {
+            // console.log(returnDate);
+
+            var dateOfReceipt = dateOfReceipt || $('#gregorianDate1').val();
+            var returnDate = returnDate || $('#gregorianDate2').val();
+
+            var url = "{{ route('invoice.get.product') }}";
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: {
+                        section_id: sectionId,
+                        date_of_receipt: dateOfReceipt,
+                        return_date: returnDate,
+                        status: 'inactive'
+                    },
+                dataType: 'json',
+                success: function (response) {
+                    var productSelect = $('#' + productID);
+                    productSelect.empty(); // Clear existing options
+
+
+                    if (response.data && response.data.length > 0) {
+                        $.each(response.data, function (index, product) {
+
+                            var productName = product.title + " : ";
+                            if (product.model) {
+                                productName += ' - ' + product.model;
+                            }
+                            if (product.color) {
+                                productName += ' - ' + product.color;
+                            }
+                            if (product.size) {
+                                productName += ' - ' + product.size;
+                            }
+                            productName = productName.trim().replace(/^-/, '');
+
+                            productSelect.append('<option value="' + product.id + '">' + productName + '</option>');
+
+                        });
+
+                        // **Wait until options are fully loaded before selecting old value**
+                        const observer = new MutationObserver(function () {
+                            if (oldProductId && productSelect.find('option[value="' + oldProductId + '"]').length > 0) {
+                                productSelect.val(oldProductId).trigger('change');
+                                observer.disconnect(); // Stop observing once the value is set
+                            }
+                        });
+
+                        observer.observe(productSelect[0], { childList: true });
+
+
+                    } else {
+                        productSelect.append('<option value="" disabled>لا يوجد منتجات داخل القسم</option>');
+                    }
+
+                    // Execute the callback after populating the dropdown
+                    if (typeof callback === "function") {
+                        callback();
+                    }
+                },
+                error: function () {
+                    if (retryCount > 0) {
+                        console.warn("Request failed. Retrying... (" + (11 - retryCount) + "/10)");
+                        setTimeout(function () {
+                            getProductData(sectionId, productID, dateOfReceipt, returnDate, oldProductId, callback, retryCount - 1);
+                        }, 1000);
+                    }
+                }
+        });
+
+    }
+
+
+
         $(document).on('click', '[data-action="confirm"]', function() {
             $('[data-action="confirm"]').prop('disabled', true);
             $('[data-repeater-create]').prop('disabled', false);
@@ -330,7 +556,9 @@ $(document).ready(function() {
             var inputTitle = buttonId.replace('edit-button', 'title');
             var inputData = buttonId.replace('edit-button', 'data');
             var inputPrice = buttonId.replace('edit-button', 'price');
+            var inputPrice_ = buttonId.replace('edit-button', 'price_');
             var inputPayment = buttonId.replace('edit-button', 'payment');
+            var inputPayment_ = buttonId.replace('edit-button', 'payment_');
             $('[data-repeater-create]').prop('disabled', true);
             $('#' + confirmButtonId).prop('disabled', false);
             $('#' + selectParent).removeClass('disabled');
@@ -339,7 +567,9 @@ $(document).ready(function() {
             $('#' + inputTitle).prop('readonly', false);
             $('#' + inputData).prop('readonly', false);
             $('#' + inputPrice).prop('readonly', false);
+            $('#' + inputPrice_).prop('readonly', false);
             $('#' + inputPayment).prop('readonly', false);
+            $('#' + inputPayment_).prop('readonly', false);
         });
 
         $(document).on('click', '[data-repeater-create]', function() {
@@ -361,9 +591,9 @@ $(document).ready(function() {
             var returnDate = $('#gregorianDate2').val();
             var status = $('#inputState5').val() || "pending";
             if(section_id){
-                getProductData(section_id, product_id, dateOfReceipt, returnDate , status);
+                getProductData(section_id, product_id, dateOfReceipt, returnDate);
             }else{
-                getProductData(parent_id, product_id, dateOfReceipt, returnDate , status);
+                getProductData(parent_id, product_id, dateOfReceipt, returnDate);
                 // console.log(parent_id);
             }
         });
@@ -378,234 +608,27 @@ $(document).ready(function() {
          // Handle change event for the date fields
         // Handle change event for the date fields
         // Handle change event for the date fields and status select
-        $('#gregorianDate1, #gregorianDate2, #inputState5').on('change', function() {
-            var sectionId = $('[data-repeater-section]').val(); // Get the selected section ID
-            var parentId = $('[data-repeater-parent]').val(); // Get the selected section ID
-            var SecId = $('[data-repeater-section]').attr('id'); // Get the selected section ID
-            var productID = $('[data-repeater-product]').attr('id'); // Get the product ID
-            var dateOfReceipt = $('#gregorianDate1').val(); // Get the value of the dateOfReceipt field
-            var returnDate = $('#gregorianDate2').val(); // Get the value of the returnDate field
-            var status = $('#inputState5').val() || "pending"; // Get the value of the status field
+        // $('#gregorianDate1, #gregorianDate2, #inputState5').on('change', function() {
+        //     $('[data-repeater-item]').each(function() {
+        //         var row = $(this); // Get the current row
 
+        //         var sectionId = row.find('[data-repeater-section]').val(); // Get the selected section ID
+        //         var parentId = row.find('[data-repeater-parent]').val(); // Get the parent section ID
+        //         var SecId = row.find('[data-repeater-section]').attr('id'); // Get the section select ID
+        //         var productID = row.find('[data-repeater-product]').attr('id'); // Get the product select ID
+        //         var dateOfReceipt = $('#gregorianDate1').val(); // Get the value of the dateOfReceipt field
+        //         var returnDate = $('#gregorianDate2').val(); // Get the value of the returnDate field
+        //         var status = $('#inputState5').val() || "pending"; // Get the value of the status field
 
-            if((sectionId) && (productID || SecId)){
-                getProductData(sectionId, productID, dateOfReceipt, returnDate , status);
-            }else{
-                getProductData(parentId, productID, dateOfReceipt, returnDate , status);
-            }
+        //         if (sectionId && (productID || SecId)) {
+        //             getProductData(sectionId, productID, dateOfReceipt, returnDate);
+        //         } else {
+        //             getProductData(parentId, productID, dateOfReceipt, returnDate);
+        //         }
+        //     });
+        // });
 
-        });
-
-        function getProductData(sectionId , productID , dateOfReceipt ,returnDate , status) {
-
-            var url = "{{ route('invoice.get.product') }}";
-            $.ajax({
-                    type: 'GET',
-                    url: url,
-                    data: {
-                        section_id: sectionId,
-                        date_of_receipt: dateOfReceipt,
-                        return_date: returnDate,
-                        status: status
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                            var productSelect = $('#' + productID);
-                            productSelect.empty(); // Clear existing options
-                            //console.log(date);
-                            if (response.data && response.data.length > 0) {
-
-                                // Populate the select options
-                                $.each(response.data, function(index, product) {
-                                    var productName = product.title + " : ";
-                                    if (product.model) {
-                                        productName += ' - ' + product.model;
-                                    }
-                                    if (product.color) {
-                                        productName += ' - ' + product.color;
-                                    }
-                                    if (product.size) {
-                                        productName += ' - ' + product.size;
-                                    }
-                                    productName = productName.trim().replace(/^-/, '');
-
-                                    productSelect.append('<option value="' + product.id + '">' + productName + '</option>');
-                                });
-                            } else {
-                                productSelect.append('<option value="" disabled>لا يوجد منتجات داخل القسم</option>');
-                            }
-
-                    },
-                    error: function(xhr, status, error) {
-                        // console.log('Error:', error);
-                        // console.log('XHR:', xhr);
-                        // console.log('Status:', status);
-                        // console.log('Response Text:', xhr.responseText);
-                    }
-                });
-        }
-        function getSection(parentId , SecId) {
-            var url = "{{ route('invoice.get.section') }}";
-            $.ajax({
-                    type: 'GET',
-                    url: url,
-                    data: {
-                        parent_id: parentId,
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                            var sectionSelect = $('#' + SecId);
-                            sectionSelect.empty();
-                            // console.log(SecId)
-                            if (response.data && response.data.length > 0) {
-                                // Populate the select options
-                                $.each(response.data, function(index, section) {
-                                    sectionSelect.append('<option value="' + section.id + '">' + section.name + '</option>');
-                                });
-                            }else {
-                                sectionSelect.append('<option value="" disabled>لا يوجد اقسام فرعيه داخل القسم</option>');
-                            }
-                            sectionSelect.trigger('change');
-                    },
-                    error: function(xhr, status, error) {
-                        // console.log('Error:', error);
-                        // console.log('XHR:', xhr);
-                        // console.log('Status:', status);
-                        // console.log('Response Text:', xhr.responseText);
-                    }
-                });
-        }
 });
 </script>
-<script src="/assets/js/moment.min.js"></script>
-<script src="/assets/js/pikaday.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var statusSelect = document.getElementById('inputState5');
-    var dateContainer1 = document.getElementById('dateContainer1');
-    var dateContainer2 = document.getElementById('dateContainer2');
-    var gregorianDateInput1 = document.getElementById('gregorianDate1');
-    var gregorianDateInput2 = document.getElementById('gregorianDate2');
-    var today = new Date();
-
-    // Check if there are old values for both date_of_receipt and return_date
-    var oldDateValue1 = gregorianDateInput1.value;
-    var oldDateValue2 = gregorianDateInput2.value;
-    var initialDate1 = oldDateValue1 ? moment(oldDateValue1).toDate() : today;
-    var initialDate2 = oldDateValue2 ? moment(oldDateValue2).toDate() : moment(today).add(1, 'days').toDate();
-
-    // Initialize Pikaday for the second date input
-    var picker2 = new Pikaday({
-        field: gregorianDateInput2,
-        format: 'YYYY-MM-DD',
-        i18n: {
-            previousMonth: 'الشهر السابق',
-            nextMonth: 'الشهر القادم',
-            months: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
-            weekdays: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-            weekdaysShort: ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت']
-        },
-        defaultDate: initialDate2,
-        setDefaultDate: !!oldDateValue2, // Set default only if an old value exists
-        isRTL: true
-    });
-
-    // Initialize Pikaday for the first date input
-    var picker1 = new Pikaday({
-        field: gregorianDateInput1,
-        format: 'YYYY-MM-DD',
-        i18n: {
-            previousMonth: 'الشهر السابق',
-            nextMonth: 'الشهر القادم',
-            months: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
-            weekdays: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-            weekdaysShort: ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت']
-        },
-        defaultDate: initialDate1,
-        setDefaultDate: !!oldDateValue1, // Set default only if an old value exists
-        onSelect: function(date) {
-            var gregorianDate = moment(date).format('YYYY-MM-DD');
-            gregorianDateInput1.value = gregorianDate;
-
-            // Set the second date picker to one day after the selected date
-            var nextDay = moment(date).add(2, 'days').toDate();
-            picker2.setDate(nextDay);
-        },
-        isRTL: true
-    });
-
-    // Set initial dates
-    picker1.setDate(initialDate1);
-    picker2.setDate(initialDate2);
-
-    // Event listener for the select dropdown
-    statusSelect.addEventListener('change', function() {
-        if (statusSelect.value === 'inactive') {
-            dateContainer1.style.display = 'none';
-            dateContainer2.style.display = 'none';
-            gregorianDateInput1.value = ''; // Clear the value
-            gregorianDateInput2.value = ''; // Clear the value
-        } else {
-            dateContainer1.style.display = 'block';
-            dateContainer2.style.display = 'block';
-        }
-    });
-
-    // Initial state of date containers based on the default selected option
-    if (statusSelect.value === 'pending') {
-        dateContainer1.style.display = 'block';
-        dateContainer2.style.display = 'block';
-    } else {
-        dateContainer1.style.display = 'none';
-        dateContainer2.style.display = 'none';
-        gregorianDateInput1.value = ''; // Ensure values are cleared
-        gregorianDateInput2.value = ''; // Ensure values are cleared
-    }
-});
-
-</script>
-
-<script>
-    document.getElementById('myForm').addEventListener('submit', function(event) {
-        var button = event.target.querySelector('button[type="submit"]');
-        button.disabled = true;
-        button.textContent = 'جاري تنفيذ طلبك';
-    });
-</script>
-
-{{-- <script>
-    document.getElementById('inputState5').addEventListener('change', function() {
-        fetch(`{{ route('get.sections' , ['status' => 1])}}`)
-        .then(response => response.json()) // Parse JSON response
-        .then(data => console.log(data)) // Handle the data
-        .catch(error => console.error("Error:", error)); // Handle errors
-    });
-</script> --}}
-{{-- <script>
-    document.getElementById('inputState5').addEventListener('change', function() {
-        fetch(`{{ route('get.sections', ['status' => 1]) }}`)
-        .then(response => response.json()) // Parse JSON response
-        .then(data => {
-            const parentSelect = document.querySelectorAll('[data-repeater-parent]');
-            console.log(parentSelect);
-            console.log(1);
-            // document.querySelectorAll('[data-repeater-parent]').forEach(select => {
-            //     console.log(select.value);
-            // });
-
-            // parentSelect.innerHTML = '<option value="">اختر القسم الرئيسي</option>'; // Clear old options
-
-            // data.forEach(section => {
-            //     const option = document.createElement('option');
-            //     option.value = section.id;
-            //     option.textContent = section.name;
-            //     parentSelect.appendChild(option);
-            // });
-        })
-        .catch(error => console.error("Error:", error)); // Handle errors
-    });
-</script> --}}
-
 @endsection
 

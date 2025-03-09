@@ -10,7 +10,16 @@
     background-color: #ccc;
     color: #666;
   }
+  .dropdown-menu[dir="rtl"], .dropdown-menu[style*="direction: rtl"] {
+    direction: rtl;
+    text-align: right;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 10px;
+}
+
 </style>
+
 @endsection
 @section('content')
 @if ($errors->any())
@@ -115,64 +124,226 @@
                             <td><span class="badge badge-danger">بيع</span></td>
                         @endif
                         <td class="text-center">
-                            <div class="btn-group">
-                         @can('access-superAdmin')
 
-                                @if ($invoice->orders->sum('price') - $invoice->orders->sum('payment') <> 0 )
-                                    <form action="{{ route('invoice.pay' , $invoice->id) }}" method="post">
+                            {{-- Pay Button (outside dropdown) --}}
+                            @can('access-superAdmin')
+                                @if ($invoice->orders->sum('price') - $invoice->orders->sum('payment') != 0)
+                                    <form action="{{ route('invoice.pay', $invoice->id) }}" method="post" class="d-inline-block">
                                         @csrf
-                                        <button type="button" class="btn btn-sm btn-outline-info pay-btn" data-toggle="modal" data-target="#verticalModal2" data-invoice-id="{{ $invoice->id }}" disabled>
-                                            <i class="fe fe-16 fe-dollar-sign"></i>&nbsp;دفع
+                                        <button type="button" class="btn btn-sm btn-outline-info pay-btn"
+                                            data-toggle="modal" data-target="#verticalModal2"
+                                            data-invoice-id="{{ $invoice->id }}">
+                                            <i class="fe fe-dollar-sign"></i> دفع
                                         </button>
                                     </form>
-                                @else
-                                <button type="button" class="btn btn-sm btn-outline-danger" disabled>
-                                    <i class="fe fe-16 fe-x-circle"></i>&nbsp;
-                                </button>
                                 @endif
+
+                                {{-- Restore Button (outside dropdown) --}}
                                 @if (is_null($invoice->restored_at))
-                                    <form action="{{ route('invoice.restore' , $invoice->id) }}" method="post">
+                                    <form action="{{ route('invoice.restore', $invoice->id) }}" method="post" class="d-inline-block">
                                         @csrf
                                         @method("PUT")
-                                        <button type="button" class="btn btn-sm btn-outline-success restore-btn" data-toggle="modal" data-target="#verticalModal" data-invoice-id="{{ $invoice->id }}" disabled>
-                                            <i class="fe fe-16 fe-rotate-ccw"></i>&nbsp;استرجاع
+                                        <button type="button" class="btn btn-sm btn-outline-warning restore-btn"
+                                            data-toggle="modal" data-target="#verticalModal"
+                                            data-invoice-id="{{ $invoice->id }}">
+                                            <i class="fe fe-rotate-ccw"></i> استرجاع
                                         </button>
                                     </form>
-                                @else
-                                    <button type="button" class="btn btn-sm btn-outline-danger" disabled>
-                                        <i class="fe fe-16 fe-x-circle"></i>&nbsp;
-                                    </button>
                                 @endif
-                                @endcan
-                                <a href="{{ route('invoice.print' , $invoice->id) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fe fe-16 fe-printer"></i>&nbsp;طباعة
-                                </a>
-                                {{-- <button type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#updateModal"
-                                        data-invoice-id="{{ $invoice->id }}"
-                                        data-status="{{ $invoice->status }}"
-                                        data-name="{{ $invoice->client->name }}"
-                                        data-address="{{ $invoice->client->address }}"
-                                        data-phone="{{ $invoice->client->phone }}"
-                                        data-date-of-receipt="{{ $invoice->date_of_receipt }}"
-                                        data-return-date="{{ $invoice->return_date }}"
-                                        disabled>
-                                    <i class="fe fe-16 fe-edit"></i>&nbsp;تعديل
-                                </button> --}}
-                                {{-- <a href="{{ route('invoice.edit' , $invoice->id) }}" class="btn btn-sm btn-outline-success">
-                                    <i class="fe fe-16 fe-edit"></i>&nbsp;تعديل
-                                </a> --}}
-                                @can('access-superAdmin')
+                            @endcan
 
-                                <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post">
+                            {{-- Dropdown menu for edit, delete, print --}}
+                            {{-- <div class="dropdown d-inline-block">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="invoiceMenu{{ $invoice->id }}"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fe fe-more-vertical"></i>
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-right text-right" aria-labelledby="invoiceMenu{{ $invoice->id }}"
+                                    style="min-width: 200px; font-size: 13px; direction: rtl;">
+
+                                    @can('access-superAdmin')
+                                        <a href="{{ route('invoice.edit', [$invoice->id, $invoice->status]) }}" class="dropdown-item">
+                                            <i class="fe fe-edit"></i> تعديل
+                                        </a>
+
+                                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post" class="dropdown-item p-0 m-0">
+                                            @csrf
+                                            @method("DELETE")
+                                            <button type="button" class="btn btn-sm btn-block text-right delete-btn"
+                                                    data-toggle="modal" data-target="#verticalModal1"
+                                                    data-invoice-id="{{ $invoice->id }}">
+                                                <i class="fe fe-trash-2"></i> حذف
+                                            </button>
+                                        </form>
+                                    @endcan
+
+                                    <a href="{{ route('invoice.print', $invoice->id) }}" class="dropdown-item">
+                                        <i class="fe fe-printer"></i> طباعة
+                                    </a>
+                                </div>
+                            </div> --}}
+                            {{-- <div class="dropdown d-inline-block">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    id="invoiceMenu{{ $invoice->id }}" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fe fe-more-vertical"></i>
+                                </button>
+                            
+                                <div class="dropdown-menu dropdown-menu-right text-right"
+                                    aria-labelledby="invoiceMenu{{ $invoice->id }}"
+                                    style="min-width: 200px; font-size: 14px; direction: rtl; padding: 10px; border-radius: 8px;">
+                            
+                                    @can('access-superAdmin')
+                                        <a href="{{ route('invoice.edit', [$invoice->id, $invoice->status]) }}"
+                                            class="dropdown-item py-2">
+                                            <i class="fe fe-edit ml-1"></i> تعديل
+                                        </a>
+                            
+                                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post" class="m-0">
+                                            @csrf
+                                            @method("DELETE")
+                                            <button type="button"
+                                                class="btn btn-sm btn-block text-right delete-btn dropdown-item py-2 text-danger"
+                                                data-toggle="modal" data-target="#verticalModal1"
+                                                data-invoice-id="{{ $invoice->id }}">
+                                                <i class="fe fe-trash-2 ml-1"></i> حذف
+                                            </button>
+                                        </form>
+                                    @endcan
+                            
+                                    <a href="{{ route('invoice.print', $invoice->id) }}" class="dropdown-item py-2">
+                                        <i class="fe fe-printer ml-1"></i> طباعة
+                                    </a>
+                                </div>
+                            </div> --}}
+                            {{-- <div class="dropdown d-inline-block">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    id="invoiceMenu{{ $invoice->id }}" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fe fe-more-vertical"></i>
+                                </button>
+                            
+                                <div class="dropdown-menu dropdown-menu-right"
+                                    aria-labelledby="invoiceMenu{{ $invoice->id }}"
+                                    style="min-width: 200px; font-size: 14px; direction: rtl; text-align: right; padding: 10px; border-radius: 8px;">
+                            
+                                    @can('access-superAdmin')
+                                        <a href="{{ route('invoice.edit', [$invoice->id, $invoice->status]) }}"
+                                           class="dropdown-item d-flex align-items-center py-2">
+                                            <i class="fe fe-edit ml-2"></i> تعديل
+                                        </a>
+                            
+                                        <button type="button"
+                                            class="dropdown-item d-flex align-items-center py-2 text-danger delete-btn"
+                                            data-toggle="modal" data-target="#verticalModal1"
+                                            data-invoice-id="{{ $invoice->id }}">
+                                            <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post" class="d-inline m-0 p-0">
+                                                @csrf
+                                                @method("DELETE")
+                                            </form>
+                                            <i class="fe fe-trash-2 ml-2"></i> حذف
+                                        </button>
+                                    @endcan
+                            
+                                    <a href="{{ route('invoice.print', $invoice->id) }}"
+                                       class="dropdown-item d-flex align-items-center py-2">
+                                        <i class="fe fe-printer ml-2"></i> طباعة
+                                    </a>
+                                </div>
+                            </div> --}}
+                            
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                    id="invoiceMenu{{ $invoice->id }}" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i class="fe fe-more-vertical"></i>
+                                </button>
+                            
+                                <div class="dropdown-menu dropdown-menu-right"
+                                    aria-labelledby="invoiceMenu{{ $invoice->id }}"
+                                    style="min-width: 200px; font-size: 14px; direction: rtl; text-align: right; padding: 10px; border-radius: 8px;">
+                                    <a href="{{ route('invoice.print', $invoice->id) }}"
+                                        class="dropdown-item d-flex align-items-center py-2 text-success">
+                                         <i class="fe fe-printer ml-2"></i> طباعة
+                                     </a>
+                                    @can('access-superAdmin')
+                                        <a href="{{ route('invoice.edit', [$invoice->id, $invoice->status]) }}"
+                                           class="dropdown-item d-flex align-items-center py-2 text-primary">
+                                            <i class="fe fe-edit ml-2"></i> تعديل
+                                        </a>
+                            
+                                        <button type="button"
+                                            class="dropdown-item d-flex align-items-center py-2 text-danger delete-btn"
+                                            data-toggle="modal" data-target="#verticalModal1"
+                                            data-invoice-id="{{ $invoice->id }}">
+                                            <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post" class="d-inline m-0 p-0">
+                                                @csrf
+                                                @method("DELETE")
+                                            </form>
+                                            <i class="fe fe-trash-2 ml-2"></i> حذف
+                                        </button>
+                                    @endcan
+                            
+                                </div>
+                            </div>
+                            
+                        </td>
+
+                        {{-- <td class="text-center">
+                            @can('access-superAdmin')
+                            @if ($invoice->orders->sum('price') - $invoice->orders->sum('payment') != 0)
+                                <form action="{{ route('invoice.pay', $invoice->id) }}" method="post" class="dropdown-item p-0 m-0">
                                     @csrf
-                                    @method("DELETE")
-                                    <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-toggle="modal" data-target="#verticalModal1" data-invoice-id="{{ $invoice->id }}" disabled>
-                                        <i class="fe fe-16 fe-trash-2"></i>&nbsp;حذف
+                                    <button type="button" class="btn btn-sm btn-block text-left pay-btn"
+                                        data-toggle="modal" data-target="#verticalModal2"
+                                        data-invoice-id="{{ $invoice->id }}">
+                                        <i class="fe fe-dollar-sign"></i> دفع
                                     </button>
                                 </form>
-                                @endcan
+                            @endif
+
+                            @if (is_null($invoice->restored_at))
+                                <form action="{{ route('invoice.restore', $invoice->id) }}" method="post" class="dropdown-item p-0 m-0">
+                                    @csrf
+                                    @method("PUT")
+                                    <button type="button" class="btn btn-sm btn-block text-left restore-btn"
+                                        data-toggle="modal" data-target="#verticalModal"
+                                        data-invoice-id="{{ $invoice->id }}">
+                                        <i class="fe fe-rotate-ccw"></i> استرجاع
+                                    </button>
+                                </form>
+                            @endif
+                        @endcan
+
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="invoiceMenu{{ $invoice->id }}"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fe fe-more-vertical"></i>
+                                </button>
+                                <a href="{{ route('invoice.print', $invoice->id) }}" class="dropdown-item">
+                                    <i class="fe fe-printer"></i> طباعة
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="invoiceMenu{{ $invoice->id }}" style="min-width: 200px; font-size: 13px;">
+                                    @can('access-superAdmin')
+                                        <a href="{{ route('invoice.edit', [$invoice->id, $invoice->status]) }}" class="dropdown-item">
+                                            <i class="fe fe-edit"></i> تعديل
+                                        </a>
+
+                                        <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post" class="dropdown-item p-0 m-0">
+                                            @csrf
+                                            @method("DELETE")
+                                            <button type="button" class="btn btn-sm btn-block text-left delete-btn"
+                                                    data-toggle="modal" data-target="#verticalModal1"
+                                                    data-invoice-id="{{ $invoice->id }}">
+                                                <i class="fe fe-trash-2"></i> حذف
+                                            </button>
+                                        </form>
+                                    @endcan
+                                </div>
                             </div>
-                        </td>
+
+                        </td> --}}
                     </tr>
                       @endforeach
                     </tbody>
@@ -210,7 +381,10 @@
                 <form id="restore-form" method="POST">
                     @csrf
                     @method('PUT')
-                    <button type="submit" class="btn mb-2 btn-primary">استرجاع</button>
+                    <button type="submit" class="btn mb-2 btn-primary" onclick="this.disabled = true; this.form.submit();">
+                        استرجاع
+                    </button>
+                    {{-- <button type="submit" class="btn mb-2 btn-primary">استرجاع</button> --}}
                 </form>
             </div>
         </div>
@@ -232,7 +406,10 @@
                 <form id="delete-form" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn mb-2 btn-danger">حذف</button>
+                    <button type="submit" class="btn mb-2 btn-danger" onclick="this.disabled = true; this.form.submit();">
+                        حذف
+                    </button>
+                    {{-- <button type="submit" class="btn mb-2 btn-danger">حذف</button> --}}
                 </form>
             </div>
         </div>
@@ -252,7 +429,11 @@
                 <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">غلق</button>
                 <form id="pay-form" method="POST">
                     @csrf
-                    <button type="submit" class="btn mb-2 btn-info">دفع</button>
+                    <button type="submit" class="btn mb-2 btn-info" onclick="this.disabled = true; this.form.submit();">
+                        دفع
+                    </button>
+
+                    {{-- <button type="submit" class="btn mb-2 btn-info" onclick="disable">دفع</button> --}}
                 </form>
             </div>
         </div>

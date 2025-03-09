@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use App\Events\RegisterOrderPricing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InvoiceRequest;
+use App\Http\Resources\invoiceUpdate;
 
 class InvoiceController extends Controller
 {
@@ -38,8 +39,8 @@ class InvoiceController extends Controller
             $query->orderByRaw('IF(orders.payment < orders.price, 1, 0) DESC')
                 ->orderBy('orders.created_at', 'desc');
         }])
-        ->selectRaw('invoices.*, 
-            (SELECT SUM(orders.price) FROM orders WHERE orders.invoice_id = invoices.id) as total_price, 
+        ->selectRaw('invoices.*,
+            (SELECT SUM(orders.price) FROM orders WHERE orders.invoice_id = invoices.id) as total_price,
             (SELECT SUM(orders.payment) FROM orders WHERE orders.invoice_id = invoices.id) as total_payment'
         )
         ->orderByRaw('ISNULL(restored_at) DESC')
@@ -256,52 +257,49 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    // public function edit(string $id)
-    // {
-    //     $parent_sections = Section::whereNull('section_id')->get(['id' , 'name']);
-    //     $this->show($id);
-    //     // return $this->invoice;
-    //     return view('invoices.edit' , ['parent_sections' => $parent_sections , 'invoice' => $this->invoice]);
-    // }
-    // public function update(InvoiceRequest $request, string $id)
-    // {
-    //     // return $request;
-    //     DB::beginTransaction();
-    //     try
-    //     {
-    //         Client::where('id' ,$request->client_id)->update($request->only(['name' , 'phone' , 'address']));
-    //         $invoice = Invoice::withTrashed()->where('id' , $request->invoice_id)->first();
-    //         $old_invoice= clone $invoice;
-    //         $invoice->orders()->delete();
-    //         $invoice->update($request->only(['status', 'date_of_receipt' ,'return_date']));
-    //         if(is_array($request->get('list-product')) && count($request->get('list-product')) > 0){
-    //             foreach ($request->get('list-product') as $products) {
-    //                 unset($products['section_id']);
-    //                 $products['invoice_id'] = $request->invoice_id;
-    //                 if($request->status == 'inactive'){
-    //                     Product::whereId($products['product_id'])->decrement('quantity');
-    //                 }
-    //                 Order::create($products);
-    //             }
-    //         }
-    //         if(is_array($request->get('list-product-1')) && count($request->get('list-product-1')) > 0){
-    //             foreach ($request->get('list-product-1') as $additions) {
-    //                 $addition = Addition::create(['title' => $additions['title'] , 'data' => $additions['data']]);
-    //                 unset($additions['title'] ,$additions['data']);
-    //                 $additions['invoice_id'] = $request->invoice_id;
-    //                 $additions['addition_id'] = $addition->id;
-    //                 Order::create($additions);
-    //             }
-    //         }
-    //         DB::commit();
-    //         event(new InvoiceCreated($invoice));
-    //         event(new InvoiceCreated($old_invoice));
-    //         return to_route('invoice.index');
-    //     }catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->with('error','Failed to insert order');
-    //     }
-    // }
+    public function edit(string $id , string $status)
+    {
+        $parent_sections = $this->getSections($status === 'pending' ? 1 : 0);
+        $invoice = self::getInvoice($id);
+  
+
+        $invoice->products = json_decode($invoice->products, true);
+        $invoice->additions = json_decode($invoice->additions, true);
+
+ 
+        $invoice->products = is_array($invoice->products) ? array_values(array_filter($invoice->products)) : [];
+        $invoice->additions = is_array($invoice->additions) ? array_values(array_filter($invoice->additions)) : [];
+
+        $invoice->products = collect($invoice->products)->map(function($product) {
+            if (is_null($product['parent_id'])) {
+                $product['parent_id']= $product['section_id'];
+                unset($product['section_id']);
+            }
+            return $product;
+        })->toArray();
+
+
+        // return $invoice;
+        return view('invoices.edit', [
+            'parent_sections' => $parent_sections,
+            'invoice' => $invoice,
+        ]);
+    }
+    public function update(InvoiceRequest $request, string $id)
+    {
+        // return $request;
+        DB::beginTransaction();
+        try
+        {
+            $this->destroy($id);
+            $this->store($request);
+            DB::commit();
+            return to_route('invoice.index')->with(['success' => 'تم تعديل الفاتوره بنجاح']);
+        }catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error','خطا');
+        }
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -438,8 +436,8 @@ class InvoiceController extends Controller
                 ->orderBy('orders.created_at', 'desc');
         }])
         ->where('status' , $status)
-        ->selectRaw('invoices.*, 
-            (SELECT SUM(orders.price) FROM orders WHERE orders.invoice_id = invoices.id) as total_price, 
+        ->selectRaw('invoices.*,
+            (SELECT SUM(orders.price) FROM orders WHERE orders.invoice_id = invoices.id) as total_price,
             (SELECT SUM(orders.payment) FROM orders WHERE orders.invoice_id = invoices.id) as total_payment'
         )
         ->orderByRaw('ISNULL(restored_at) DESC')

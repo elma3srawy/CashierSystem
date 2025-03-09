@@ -67,6 +67,8 @@ Route::middleware('auth')->group(function(){
         Route::put('/invoice/{id}/restore', [InvoiceController::class, 'restore'])->name('invoice.restore');
         Route::get('/invoice/{id}/clients', [InvoiceController::class, 'invoiceClients'])->name('invoice.clients');
         Route::post('/invoice/{id}/pay', [InvoiceController::class, 'pay'])->name('invoice.pay');
+        Route::get('/invoice/{id}/{status}/edit', [InvoiceController::class, 'edit'])->name('invoice.edit');
+        Route::put('/invoice/{id}/update', [InvoiceController::class, 'update'])->name('invoice.update');
 
         Route::get('/order/create', [InvoiceController::class, 'createOrder'])->name('order.create');
         Route::put('/order/update', [InvoiceController::class, 'updateOrder'])->name('order.update');

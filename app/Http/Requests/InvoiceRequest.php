@@ -21,7 +21,7 @@ class InvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = $this->method() == "POST" ? $this->onStore() : $this->onUpdate();
+        $rules =  $this->onStore();
         if ($this->status == 'pending') {
             $rules['date_of_receipt'] = ['required', 'date', 'date_format:Y-m-d'];
             $rules['return_date'] = ['required', 'date', 'date_format:Y-m-d','after:' . $this->date_of_receipt];
@@ -80,7 +80,7 @@ class InvoiceRequest extends FormRequest
             'name.max' => 'اسم العميل يجب أن لا يتجاوز 255 حرفًا.',
             'phone.required' => 'رقم الهاتف مطلوب.',
             'phone.size' => 'رقم الهاتف يجب أن يكون مكون من 11 رقمًا.',
-            'phone.regex' => 'رقم الهاتف يجب أن يبدأ بـ 01 ثم يتبعه رقم من 0، 1، 2، أو 5.',
+            'phone.regex' => 'رقم الهاتف يجب أن يبدأ بـ 015 او 010 او 011 او 012.',
             'city.required_without' => 'المدينة أو العنوان يجب تحديد واحد منهما.',
             'address.required_without' => 'العنوان أو المدينة يجب تحديد واحد منهما.',
             'list-product.required_without' => 'يجب تحديد قائمة المنتجات أو المنتجات البديلة.',
@@ -89,15 +89,23 @@ class InvoiceRequest extends FormRequest
             'list-product.*.product_id.exists' => 'المنتج المحدد غير موجود.',
             'list-product.*.price.required' => 'السعر مطلوب.',
             'list-product.*.price.numeric' => 'السعر يجب أن يكون عددًا.',
+            'list-product.*.price.max' => 'السعر يجب أن يكون اصغر من أو يساوي 1000000.',
             'list-product.*.price.min' => 'السعر يجب أن يكون أكبر من أو يساوي 0.',
             'list-product.*.payment.required' => 'الدفع مطلوب.',
             'list-product.*.payment.numeric' => 'الدفع يجب أن يكون عددًا.',
+            'list-product.*.payment.max' => 'السعر يجب أن يكون اصغر من أو يساوي 1000000.',
             'list-product.*.payment.min' => 'الدفع يجب أن يكون أكبر من أو يساوي 0.',
+            'list-product.*.payment.gte' => 'المدفوع يجب أن يكون أكبر من أو يساوي المبلغ المدفوع.',
+            'list-product.*.price.gte' => 'السعر يجب أن يكون أكبر من أو يساوي المبلغ المدفوع.',
+            'list-product-1.*.payment.max' => 'السعر يجب أن يكون اصغر من أو يساوي 1000000.',
             'list-product-1.*.title.required' => 'عنوان المنتج البديل مطلوب.',
             'list-product-1.*.title.regex' => 'عنوان المنتج البديل يجب أن يحتوي على نص غير مكون من أرقام فقط.',
+            'list-product-1.*.price.max' => 'السعر يجب أن يكون اصغر من أو يساوي 1000000.',
             'list-product-1.*.price.required' => 'السعر مطلوب.',
             'list-product-1.*.price.numeric' => 'السعر يجب أن يكون عددًا.',
             'list-product-1.*.price.min' => 'السعر يجب أن يكون أكبر من أو يساوي 0.',
+            'list-product-1.*.price.gte' => 'السعر يجب أن يكون أكبر من أو يساوي المبلغ المدفوع.',
+            'list-product-1.*.payment.gte' => 'المدفوع يجب أن يكون أكبر من أو يساوي المبلغ المدفوع.',
             'list-product-1.*.payment.required' => 'الدفع مطلوب.',
             'list-product-1.*.payment.numeric' => 'الدفع يجب أن يكون عددًا.',
             'list-product-1.*.payment.min' => 'الدفع يجب أن يكون أكبر من أو يساوي 0.',

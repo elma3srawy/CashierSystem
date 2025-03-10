@@ -24,62 +24,69 @@
       <td><span class="badge badge-danger">بيع</span></td>
   @endif
   <td class="text-center">
-      <div class="btn-group">
+    {{-- Pay Button (outside dropdown) --}}
     @can('access-superAdmin')
-          @if ($invoice->price - $invoice->payment <> 0 )
-              <form action="{{ route('invoice.pay' , $invoice->id) }}" method="post">
-                  @csrf
-                  <button type="button" class="btn btn-sm btn-outline-info pay-btn" data-toggle="modal" data-target="#verticalModal2" data-invoice-id="{{ $invoice->id }}">
-                      <i class="fe fe-16 fe-dollar-sign"></i>&nbsp;دفع
-                  </button>
-              </form>
-          @else
-          <button type="button" class="btn btn-sm btn-outline-danger">
-              <i class="fe fe-16 fe-x-circle"></i>&nbsp;
-          </button>
-          @endif
-          @if (is_null($invoice->restored_at))
-              <form action="{{ route('invoice.restore' , $invoice->id) }}" method="post">
-                  @csrf
-                  @method("PUT")
-                  <button type="button" class="btn btn-sm btn-outline-success restore-btn" data-toggle="modal" data-target="#verticalModal" data-invoice-id="{{ $invoice->id }}" >
-                      <i class="fe fe-16 fe-rotate-ccw"></i>&nbsp;استرجاع
-                  </button>
-              </form>
-          @else
-              <button type="button" class="btn btn-sm btn-outline-danger">
-                  <i class="fe fe-16 fe-x-circle"></i>&nbsp;
-              </button>
-          @endif
-        @endcan
-          <a href="{{ route('invoice.print' , $invoice->id) }}" class="btn btn-sm btn-outline-primary">
-              <i class="fe fe-16 fe-printer"></i>&nbsp;طباعة
-          </a>
-          {{-- <button type="button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#updateModal"
-                data-invoice-id="{{ $invoice->id }}"
-                data-status="{{ $invoice->status }}"
-                data-name="{{ $invoice->name}}"
-                data-address="{{ $invoice->address }}"
-                data-phone="{{ $invoice->phone }}"
-                data-date-of-receipt="{{ $invoice->date_of_receipt }}"
-                data-return-date="{{ $invoice->return_date }}">
-            <i class="fe fe-16 fe-edit"></i>&nbsp;تعديل
-        </button> --}}
-        {{-- <a href="{{ route('invoice.edit' , $invoice->id) }}" class="btn btn-sm btn-outline-success">
-            <i class="fe fe-16 fe-edit"></i>&nbsp;تعديل
-        </a> --}}
-         @can('access-superAdmin')
+        @if ($invoice->price - $invoice->payment != 0)
+            <form action="{{ route('invoice.pay', $invoice->id) }}" method="post" class="d-inline-block">
+                @csrf
+                <button type="button" class="btn btn-sm btn-outline-info pay-btn"
+                    data-toggle="modal" data-target="#verticalModal2"
+                    data-invoice-id="{{ $invoice->id }}">
+                    <i class="fe fe-dollar-sign"></i> دفع
+                </button>
+            </form>
+        @endif
 
-          <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post">
-              @csrf
-              @method("DELETE")
-              <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-toggle="modal" data-target="#verticalModal1" data-invoice-id="{{ $invoice->id }}">
-                  <i class="fe fe-16 fe-trash-2"></i>&nbsp;حذف
-              </button>
-          </form>
-          @endcan
-      </div>
-  </td>
+        {{-- Restore Button (outside dropdown) --}}
+        @if (is_null($invoice->restored_at))
+            <form action="{{ route('invoice.restore', $invoice->id) }}" method="post" class="d-inline-block">
+                @csrf
+                @method("PUT")
+                <button type="button" class="btn btn-sm btn-outline-warning restore-btn"
+                    data-toggle="modal" data-target="#verticalModal"
+                    data-invoice-id="{{ $invoice->id }}">
+                    <i class="fe fe-rotate-ccw"></i> استرجاع
+                </button>
+            </form>
+        @endif
+    @endcan
+
+    {{-- Dropdown menu for edit, delete, print --}}
+    <div class="dropdown d-inline-block">
+        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+            id="invoiceMenu{{ $invoice->id }}" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+            <i class="fe fe-more-vertical"></i>
+        </button>
+
+        <div class="dropdown-menu dropdown-menu-right"
+            aria-labelledby="invoiceMenu{{ $invoice->id }}"
+            style="min-width: 200px; font-size: 14px; direction: rtl; text-align: right; padding: 10px; border-radius: 8px;">
+            <a href="{{ route('invoice.print', $invoice->id) }}"
+                class="dropdown-item d-flex align-items-center py-2 text-success">
+                 <i class="fe fe-printer ml-2"></i> طباعة
+             </a>
+            @can('access-superAdmin')
+                <a href="{{ route('invoice.edit', [$invoice->id, $invoice->status]) }}"
+                   class="dropdown-item d-flex align-items-center py-2 text-primary">
+                    <i class="fe fe-edit ml-2"></i> تعديل
+                </a>
+
+                <button type="button"
+                    class="dropdown-item d-flex align-items-center py-2 text-danger delete-btn"
+                    data-toggle="modal" data-target="#verticalModal1"
+                    data-invoice-id="{{ $invoice->id }}">
+                    <form action="{{ route('invoice.destroy', $invoice->id) }}" method="post" class="d-inline m-0 p-0">
+                        @csrf
+                        @method("DELETE")
+                    </form>
+                    <i class="fe fe-trash-2 ml-2"></i> حذف
+                </button>
+            @endcan
+
+        </div>
+    </div>
+</td>
 </tr>
 @endforeach
 
